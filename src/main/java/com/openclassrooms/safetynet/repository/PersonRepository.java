@@ -6,4 +6,5 @@ import com.openclassrooms.safetynet.domain.Person;
 
 public interface PersonRepository {
   List<Person> findByLastName(String lastName);
+  List<Person> findByCity(String city);
 }

@@ -56,4 +56,14 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
     return currentPersons;
   }
+
+  @Override 
+  public List<Person> findByCity(String city) {
+    for (Person person : persons) {
+      if (person.getCity().equals(city)) {
+        currentPersons.add(person);
+      }
+    }
+    return currentPersons;
+  }
 }
