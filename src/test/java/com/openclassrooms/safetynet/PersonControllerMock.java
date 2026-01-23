@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.client.RestTemplate;
 
-import com.openclassrooms.safetynet.domain.InfoPerson;
+import com.openclassrooms.safetynet.domain.InfoPersonDTO;
 import com.openclassrooms.safetynet.domain.Person;
 import com.openclassrooms.safetynet.service.SafetyNetService;
 
@@ -30,10 +30,10 @@ public class PersonControllerMock {
   @DirtiesContext
   public void testGetPersonInfoByLastName() throws Exception {
     // Arrange
-    InfoPerson person1 = new InfoPerson("Jaden", "Soroka", "jadensoroka@gmail.com", List.of(), List.of());
-    InfoPerson person2 = new InfoPerson("John", "Doe", "john.doe@gmail.com", List.of(), List.of("Amoxicillin", "Peanuts"));
+    InfoPersonDTO person1 = new InfoPersonDTO("Jaden", "Soroka", "jadensoroka@gmail.com", List.of(), List.of());
+    InfoPersonDTO person2 = new InfoPersonDTO("John", "Doe", "john.doe@gmail.com", List.of(), List.of("Amoxicillin", "Peanuts"));
     
-    List<InfoPerson> mockPersons = List.of(person1, person2);
+    List<InfoPersonDTO> mockPersons = List.of(person1, person2);
     
     when(personService.findPersonsByLastName("Boyd")).thenReturn(mockPersons);
     

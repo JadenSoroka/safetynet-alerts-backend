@@ -1,15 +1,16 @@
 package com.openclassrooms.safetynet.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.openclassrooms.safetynet.domain.CoveredPerson;
+import com.openclassrooms.safetynet.domain.CoveredPersonDTO;
 import com.openclassrooms.safetynet.domain.FireStationResponseDTO;
-import com.openclassrooms.safetynet.domain.InfoPerson;
+import com.openclassrooms.safetynet.domain.InfoPersonDTO;
 import com.openclassrooms.safetynet.domain.Person;
 import com.openclassrooms.safetynet.service.SafetyNetService;
 
@@ -26,10 +27,17 @@ public class SafetyNetController {
     FireStationResponseDTO fireStationResponseDTO = safetyNetService.getAllPersonsByFireStationNumber(stationNumber);
     return ResponseEntity.ok(fireStationResponseDTO);
   }
+
+  @GetMapping("/phoneAlert")
+  public ResponseEntity<Set<String>> getPhoneNumbersByFireStation(@RequestParam String firestation) {
+    Set<String> phoneNumbers = safetyNetService.findPhoneNumbersByFireStation(firestation);
+    return ResponseEntity.ok(phoneNumbers);
+  }
+  
   
   @GetMapping("/personInfo")
-  public ResponseEntity<List<InfoPerson>> findByLastName(@RequestParam String lastName) {
-    List<InfoPerson> persons = safetyNetService.findPersonsByLastName(lastName);
+  public ResponseEntity<List<InfoPersonDTO>> findByLastName(@RequestParam String lastName) {
+    List<InfoPersonDTO> persons = safetyNetService.findPersonsByLastName(lastName);
     return ResponseEntity.ok(persons);
   }
 

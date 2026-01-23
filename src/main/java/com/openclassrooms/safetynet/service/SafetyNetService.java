@@ -5,14 +5,17 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.openclassrooms.safetynet.domain.CoveredPerson;
+import com.openclassrooms.safetynet.SafetyNetApplication;
+import com.openclassrooms.safetynet.domain.CoveredPersonDTO;
 import com.openclassrooms.safetynet.domain.FireStation;
 import com.openclassrooms.safetynet.domain.FireStationResponseDTO;
-import com.openclassrooms.safetynet.domain.InfoPerson;
+import com.openclassrooms.safetynet.domain.InfoPersonDTO;
 import com.openclassrooms.safetynet.domain.MedicalRecord;
 import com.openclassrooms.safetynet.domain.Person;
 import com.openclassrooms.safetynet.repository.SafetyNetRepository;
@@ -28,7 +31,7 @@ public class SafetyNetService {
   public FireStationResponseDTO getAllPersonsByFireStationNumber(String stationNumber) {
     List<FireStation> stations = safetyNetRepository.findFireStationsByStationNumber(stationNumber);
     List<Person> persons = safetyNetRepository.findAllPersons();
-    List<CoveredPerson> coveredPersons = new ArrayList<>();
+    List<CoveredPersonDTO> coveredPersons = new ArrayList<>();
     int adultCount = 0;
     int childCount = 0;
     
@@ -36,7 +39,7 @@ public class SafetyNetService {
       for (Person person : persons) {
         if (fireStation.address().equals(person.address())) {
           // Add person to list of people covered by that fire station
-          coveredPersons.add(new CoveredPerson(
+          coveredPersons.add(new CoveredPersonDTO(
             person.firstName(),
             person.lastName(),
             person.address(),
@@ -47,7 +50,6 @@ public class SafetyNetService {
           MedicalRecord medicalRecord = safetyNetRepository.findMedicalRecordsByFirstAndLastName(person.firstName(), person.lastName());
 
           // Calculate age and increment respective counter
-          System.out.println("Birthdate: " + medicalRecord.birthdate());
           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
           LocalDate birthDate = LocalDate.parse(medicalRecord.birthdate().replace('/', '-'), formatter);
           LocalDate currentDate = LocalDate.now();
@@ -65,13 +67,23 @@ public class SafetyNetService {
     return fireStationResponseDTO;
   }
 
-  public List<InfoPerson> findPersonsByLastName(String lastName) {
+  public Set<String> findPhoneNumbersByFireStation(String stationNumber) {
+    FireStationResponseDTO fireStationResponseDTO = getAllPersonsByFireStationNumber(stationNumber);
+    Set<String> phoneNumbers = new HashSet<>();
+    for (CoveredPersonDTO person : fireStationResponseDTO.coveredPersons()) {
+      phoneNumbers.add(person.phoneNumber());
+    }
+
+    return phoneNumbers;
+  }
+
+  public List<InfoPersonDTO> findPersonsByLastName(String lastName) {
     List<Person> persons = safetyNetRepository.findPersonsByLastName(lastName);
-    List<InfoPerson> infoPersons = new ArrayList<>();
+    List<InfoPersonDTO> infoPersons = new ArrayList<>();
 
     for (Person person : persons) {
       MedicalRecord records = safetyNetRepository.findMedicalRecordsByFirstAndLastName(person.firstName(), person.lastName());
-      InfoPerson currentInfoPerson = new InfoPerson(person.firstName(), person.lastName(), person.email(), records.medications(), records.allergies());
+      InfoPersonDTO currentInfoPerson = new InfoPersonDTO(person.firstName(), person.lastName(), person.email(), records.medications(), records.allergies());
       infoPersons.add(currentInfoPerson);
     }
     return infoPersons;
