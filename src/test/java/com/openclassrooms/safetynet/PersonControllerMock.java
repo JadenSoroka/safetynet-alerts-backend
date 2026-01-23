@@ -14,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.client.RestTemplate;
 
+import com.openclassrooms.safetynet.domain.InfoPerson;
 import com.openclassrooms.safetynet.domain.Person;
 import com.openclassrooms.safetynet.service.SafetyNetService;
 
@@ -27,12 +28,12 @@ public class PersonControllerMock {
 
   @Test
   @DirtiesContext
-  public void testGetAllPersonsByLastName() throws Exception {
+  public void testGetPersonInfoByLastName() throws Exception {
     // Arrange
-    Person person1 = new Person("Jaden", "Soroka", "123 Sesame St", "Cleveland", "67890", "123-456-7890", "jadensoroka@gmail.com");
-    Person person2 = new Person("John", "Doe", "456 Main St", "Indianapolis", "34567", "456-789-0123", "john.doe@gmail.com");
+    InfoPerson person1 = new InfoPerson("Jaden", "Soroka", "jadensoroka@gmail.com", List.of(), List.of());
+    InfoPerson person2 = new InfoPerson("John", "Doe", "john.doe@gmail.com", List.of(), List.of("Amoxicillin", "Peanuts"));
     
-    List<Person> mockPersons = List.of(person1, person2);
+    List<InfoPerson> mockPersons = List.of(person1, person2);
     
     when(personService.findPersonsByLastName("Boyd")).thenReturn(mockPersons);
     
@@ -47,6 +48,6 @@ public class PersonControllerMock {
     // Assert
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(6, response.getBody().size());
-    assertEquals("Boyd", response.getBody().get(0).getLastName());
+    assertEquals("Boyd", response.getBody().get(0).lastName());
 }
 }

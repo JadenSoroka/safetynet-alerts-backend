@@ -2,10 +2,10 @@ package com.openclassrooms.safetynet.domain;
 
 import java.util.List;
 
-public record MedicalRecord (
+public record InfoPerson (
   String firstName,
   String lastName,
-  String birthdate,
+  String email,
   List<String> medications,
   List<String> allergies
 ) {}

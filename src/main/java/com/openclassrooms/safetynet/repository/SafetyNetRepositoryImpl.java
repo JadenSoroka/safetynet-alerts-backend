@@ -107,7 +107,7 @@ public class SafetyNetRepositoryImpl implements SafetyNetRepository {
     List<Person> currentPersons = new ArrayList<>();
     
     for (Person person : persons) {
-      if (person.getLastName().equals(lastName)) {
+      if (person.lastName().equals(lastName)) {
         currentPersons.add(person);
       }
     }
@@ -119,7 +119,7 @@ public class SafetyNetRepositoryImpl implements SafetyNetRepository {
     List<Person> currentPersons = new ArrayList<>();
 
     for (Person person : persons) {
-      if (person.getCity().equals(city)) {
+      if (person.city().equals(city)) {
         currentPersons.add(person);
       }
     }
@@ -130,7 +130,7 @@ public class SafetyNetRepositoryImpl implements SafetyNetRepository {
   public List<Person> findPersonsByAddress(String address) {
     List<Person> currentPersons = new ArrayList<>();
     for (Person person : persons) {
-      if (person.getAddress().equals(address)) {
+      if (person.address().equals(address)) {
         currentPersons.add(person);
       }
     }
@@ -141,7 +141,7 @@ public class SafetyNetRepositoryImpl implements SafetyNetRepository {
   public List<FireStation> findFireStationsByStationNumber(String stationNumber) {
     List<FireStation> currentFirestations = new ArrayList<>();
     for (FireStation firestation : firestations) {
-      if (firestation.getStationNumber().equals(stationNumber)) {
+      if (firestation.stationNumber().equals(stationNumber)) {
         currentFirestations.add(firestation);
       }
     }
@@ -149,12 +149,12 @@ public class SafetyNetRepositoryImpl implements SafetyNetRepository {
   }
 
   @Override
-  public List<MedicalRecord> findMedicalRecordsByFirstAndLastName(String firstName, String lastName) {
-    List<MedicalRecord> currentMedicalRecords = new ArrayList<>();
+  public MedicalRecord findMedicalRecordsByFirstAndLastName(String firstName, String lastName) {
+    MedicalRecord currentMedicalRecords = null;
 
-    for (MedicalRecord medicalRecord : currentMedicalRecords) {
-      if (medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName)) {
-        currentMedicalRecords.add(medicalRecord);
+    for (MedicalRecord medicalRecord : medicalRecords) {
+      if (medicalRecord.firstName().equals(firstName) && medicalRecord.lastName().equals(lastName)) {
+        currentMedicalRecords = medicalRecord;
       }
     }
 

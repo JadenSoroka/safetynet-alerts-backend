@@ -12,5 +12,5 @@ public interface SafetyNetRepository {
   List<Person> findPersonsByCity(String city);
   List<Person> findPersonsByAddress(String address);
   List<FireStation> findFireStationsByStationNumber(String address);
-  List<MedicalRecord> findMedicalRecordsByFirstAndLastName(String firstName, String lastName);
+  MedicalRecord findMedicalRecordsByFirstAndLastName(String firstName, String lastName);
 }

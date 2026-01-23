@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.openclassrooms.safetynet.domain.CoveredPerson;
+import com.openclassrooms.safetynet.domain.FireStationResponseDTO;
+import com.openclassrooms.safetynet.domain.InfoPerson;
 import com.openclassrooms.safetynet.domain.Person;
 import com.openclassrooms.safetynet.service.SafetyNetService;
 
@@ -19,10 +21,15 @@ public class SafetyNetController {
   public SafetyNetController(SafetyNetService safetyNetService) {
     this.safetyNetService = safetyNetService;
   }
+  @GetMapping("/firestation")
+  public ResponseEntity<FireStationResponseDTO> getPersonsByStationNumber(@RequestParam String stationNumber) {
+    FireStationResponseDTO fireStationResponseDTO = safetyNetService.getAllPersonsByFireStationNumber(stationNumber);
+    return ResponseEntity.ok(fireStationResponseDTO);
+  }
   
   @GetMapping("/personInfo")
-  public ResponseEntity<List<Person>> findByLastName(@RequestParam String lastName) {
-    List<Person> persons = safetyNetService.findPersonsByLastName(lastName);
+  public ResponseEntity<List<InfoPerson>> findByLastName(@RequestParam String lastName) {
+    List<InfoPerson> persons = safetyNetService.findPersonsByLastName(lastName);
     return ResponseEntity.ok(persons);
   }
 
@@ -31,15 +38,4 @@ public class SafetyNetController {
     List<String> emails = safetyNetService.getAllEmailsByCity(city);
     return ResponseEntity.ok(emails);
   }
-
-  @GetMapping("/firestation")
-  public ResponseEntity<List<CoveredPerson>> getPersonsByStationNumber(@RequestParam String stationNumber) {
-    List<CoveredPerson> persons = safetyNetService.getAllPersonsByFireStationNumber(stationNumber);
-    return ResponseEntity.ok(persons);
-  }
-  
-  
-
-
-
 }
