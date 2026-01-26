@@ -1,17 +1,17 @@
 package com.openclassrooms.safetynet.service;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.openclassrooms.safetynet.SafetyNetApplication;
 import com.openclassrooms.safetynet.domain.CoveredPersonDTO;
 import com.openclassrooms.safetynet.domain.FirePersonDTO;
 import com.openclassrooms.safetynet.domain.FireResponseDTO;
@@ -20,6 +20,8 @@ import com.openclassrooms.safetynet.domain.FireStationPersonDTO;
 import com.openclassrooms.safetynet.domain.InfoPersonDTO;
 import com.openclassrooms.safetynet.domain.MedicalRecord;
 import com.openclassrooms.safetynet.domain.Person;
+import com.openclassrooms.safetynet.domain.FloodPersonDTO;
+import com.openclassrooms.safetynet.domain.FloodResponseDTO;
 import com.openclassrooms.safetynet.repository.SafetyNetRepository;
 
 @Service
@@ -28,6 +30,18 @@ public class SafetyNetService {
 
   public SafetyNetService(SafetyNetRepository safetyNetRepository) {
     this.safetyNetRepository = safetyNetRepository;
+  }
+
+  public int getAgeByName(String firstName, String lastName) {
+    // Get that person's medical records to find age
+    MedicalRecord medicalRecord = safetyNetRepository.findMedicalRecordsByFirstAndLastName(firstName, lastName);
+
+    // Calculate age and increment respective counter
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+    LocalDate birthDate = LocalDate.parse(medicalRecord.birthdate().replace('/', '-'), formatter);
+    LocalDate currentDate = LocalDate.now();
+    int age = Period.between(birthDate, currentDate).getYears();
+    return age;
   }
   
   public FireStationPersonDTO getAllPersonsByFireStationNumber(String stationNumber) {
@@ -48,14 +62,8 @@ public class SafetyNetService {
             person.phone()
           ));
 
-          // Get that person's medical records to find age
-          MedicalRecord medicalRecord = safetyNetRepository.findMedicalRecordsByFirstAndLastName(person.firstName(), person.lastName());
+          int age = getAgeByName(person.firstName(), person.lastName());
 
-          // Calculate age and increment respective counter
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-          LocalDate birthDate = LocalDate.parse(medicalRecord.birthdate().replace('/', '-'), formatter);
-          LocalDate currentDate = LocalDate.now();
-          int age = Period.between(birthDate, currentDate).getYears();
           if (age >= 18) {
             adultCount++;
           } else {
@@ -120,6 +128,35 @@ public class SafetyNetService {
       personsEmails.add(person.email());
     }
     return personsEmails;
+  }
+
+  public List<FloodResponseDTO> getPersonsByStationNumbers(List<String> stationNumbers) {
+    List<FloodResponseDTO> floodResponseDTO = new ArrayList<>();
+    
+    for (String stationNumber : stationNumbers) {
+      Map<String, List<FloodPersonDTO>> floodResponse = new HashMap<>();
+      // For each station number sent in the request, get the full station details
+      List<FireStation> fireStations = safetyNetRepository.findFireStationsByStationNumber(stationNumber);
+
+      for (FireStation fireStation : fireStations) {
+        // For each set of station details, get all the people who are covered by that station  
+        List<FloodPersonDTO> floodPersons = new ArrayList<>();
+        List<Person> persons = safetyNetRepository.findPersonsByAddress(fireStation.address());
+
+        for (Person person : persons) {
+          // For each person covered by that station, get their age, medical records, assign their info to the floodPersonDTO, and add them to the list of floodPersons
+          int age = getAgeByName(person.firstName(), person.lastName());
+          MedicalRecord medicalRecord = safetyNetRepository.findMedicalRecordsByFirstAndLastName(person.firstName(), person.lastName());
+          FloodPersonDTO floodPersonDTO = new FloodPersonDTO(person.firstName(), person.lastName(), person.phone(), age, medicalRecord.medications(), medicalRecord.allergies());
+          floodPersons.add(floodPersonDTO);
+        }
+
+        // Map each list of flood persons to their address
+        floodResponse.put(fireStation.address(), floodPersons);
+      }
+      floodResponseDTO.add(new FloodResponseDTO(stationNumber, floodResponse));
+    }
+    return floodResponseDTO;
   }
 
 }

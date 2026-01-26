@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.openclassrooms.safetynet.domain.FireResponseDTO;
 import com.openclassrooms.safetynet.domain.FireStationPersonDTO;
+import com.openclassrooms.safetynet.domain.FloodResponseDTO;
 import com.openclassrooms.safetynet.domain.InfoPersonDTO;
 import com.openclassrooms.safetynet.service.SafetyNetService;
 
 
 @Controller
 public class SafetyNetController {
-  private SafetyNetService safetyNetService;
+  private final SafetyNetService safetyNetService;
 
   public SafetyNetController(SafetyNetService safetyNetService) {
     this.safetyNetService = safetyNetService;
@@ -38,6 +39,13 @@ public class SafetyNetController {
     FireResponseDTO fireResponseDTO = safetyNetService.getPersonsAndFireStationByAddress(address);
     return ResponseEntity.ok(fireResponseDTO);
   }
+
+  @GetMapping("/flood/stations")
+  public ResponseEntity<List<FloodResponseDTO>> getPersonsByStationNumbers(@RequestParam List<String> stations) {
+    List<FloodResponseDTO> floodResponse = safetyNetService.getPersonsByStationNumbers(stations);
+    return ResponseEntity.ok(floodResponse);
+  }
+  
   
   @GetMapping("/personInfo")
   public ResponseEntity<List<InfoPersonDTO>> findByLastName(@RequestParam String lastName) {

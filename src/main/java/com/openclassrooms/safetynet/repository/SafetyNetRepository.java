@@ -19,9 +19,9 @@ import tools.jackson.databind.ObjectMapper;
 public class SafetyNetRepository {
   
   private final ObjectMapper objectMapper = new ObjectMapper();
-  private List<Person> persons = new ArrayList<>();
-  private List<FireStation> firestations = new ArrayList<>();
-  private List<MedicalRecord> medicalRecords = new ArrayList<>();
+  private final List<Person> persons = new ArrayList<>();
+  private final List<FireStation> firestations = new ArrayList<>();
+  private final List<MedicalRecord> medicalRecords = new ArrayList<>();
   
   @PostConstruct
   public void loadData() {
