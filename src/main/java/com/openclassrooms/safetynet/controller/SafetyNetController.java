@@ -8,11 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.openclassrooms.safetynet.domain.CoveredPersonDTO;
-import com.openclassrooms.safetynet.domain.FirePersonDTO;
+import com.openclassrooms.safetynet.domain.FireResponseDTO;
 import com.openclassrooms.safetynet.domain.FireStationPersonDTO;
 import com.openclassrooms.safetynet.domain.InfoPersonDTO;
-import com.openclassrooms.safetynet.domain.Person;
 import com.openclassrooms.safetynet.service.SafetyNetService;
 
 
@@ -36,9 +34,9 @@ public class SafetyNetController {
   }
 
   @GetMapping("/fire")
-  public ResponseEntity<List<FirePersonDTO>> getPersonsAndFireStationByAddress(@RequestParam String address) {
-    List<FirePersonDTO> persons = safetyNetService.getPersonsAndFireStationByAddress(address);
-    return ResponseEntity.ok(persons);
+  public ResponseEntity<FireResponseDTO> getPersonsAndFireStationByAddress(@RequestParam String address) {
+    FireResponseDTO fireResponseDTO = safetyNetService.getPersonsAndFireStationByAddress(address);
+    return ResponseEntity.ok(fireResponseDTO);
   }
   
   @GetMapping("/personInfo")

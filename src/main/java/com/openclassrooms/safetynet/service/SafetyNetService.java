@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.openclassrooms.safetynet.SafetyNetApplication;
 import com.openclassrooms.safetynet.domain.CoveredPersonDTO;
 import com.openclassrooms.safetynet.domain.FirePersonDTO;
+import com.openclassrooms.safetynet.domain.FireResponseDTO;
 import com.openclassrooms.safetynet.domain.FireStation;
 import com.openclassrooms.safetynet.domain.FireStationPersonDTO;
 import com.openclassrooms.safetynet.domain.InfoPersonDTO;
@@ -90,7 +91,7 @@ public class SafetyNetService {
     return infoPersons;
   }
 
-  public List<FirePersonDTO> getPersonsAndFireStationByAddress(String address) {
+  public FireResponseDTO getPersonsAndFireStationByAddress(String address) {
     List<Person> persons = safetyNetRepository.findAllPersons();
     FireStation fireStation = safetyNetRepository.findFireStationByAddress(address);
 
@@ -102,12 +103,13 @@ public class SafetyNetService {
         MedicalRecord medicalRecord = safetyNetRepository.findMedicalRecordsByFirstAndLastName(person.firstName(), person.lastName());
 
         // Create person DTO for /fire endpoint
-        FirePersonDTO currentFirePerson = new FirePersonDTO(fireStation.stationNumber(), person.firstName(), person.lastName(), person.phone(), medicalRecord.medications(), medicalRecord.allergies());
+        FirePersonDTO currentFirePerson = new FirePersonDTO(person.firstName(), person.lastName(), person.phone(), medicalRecord.medications(), medicalRecord.allergies());
         firePersons.add(currentFirePerson);
       }
     }
+    FireResponseDTO fireResponseDTO = new FireResponseDTO(fireStation.stationNumber(), firePersons);
 
-    return firePersons;
+    return fireResponseDTO;
   }
 
   public List<String> getAllEmailsByCity(String city) {
