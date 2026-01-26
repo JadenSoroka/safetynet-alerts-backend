@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 
 import com.openclassrooms.safetynet.SafetyNetApplication;
 import com.openclassrooms.safetynet.domain.CoveredPersonDTO;
+import com.openclassrooms.safetynet.domain.FirePersonDTO;
 import com.openclassrooms.safetynet.domain.FireStation;
-import com.openclassrooms.safetynet.domain.FireStationResponseDTO;
+import com.openclassrooms.safetynet.domain.FireStationPersonDTO;
 import com.openclassrooms.safetynet.domain.InfoPersonDTO;
 import com.openclassrooms.safetynet.domain.MedicalRecord;
 import com.openclassrooms.safetynet.domain.Person;
@@ -28,7 +29,7 @@ public class SafetyNetService {
     this.safetyNetRepository = safetyNetRepository;
   }
   
-  public FireStationResponseDTO getAllPersonsByFireStationNumber(String stationNumber) {
+  public FireStationPersonDTO getAllPersonsByFireStationNumber(String stationNumber) {
     List<FireStation> stations = safetyNetRepository.findFireStationsByStationNumber(stationNumber);
     List<Person> persons = safetyNetRepository.findAllPersons();
     List<CoveredPersonDTO> coveredPersons = new ArrayList<>();
@@ -63,12 +64,12 @@ public class SafetyNetService {
       }
     }
 
-    FireStationResponseDTO fireStationResponseDTO = new FireStationResponseDTO(coveredPersons, adultCount, childCount);
+    FireStationPersonDTO fireStationResponseDTO = new FireStationPersonDTO(coveredPersons, adultCount, childCount);
     return fireStationResponseDTO;
   }
 
-  public Set<String> findPhoneNumbersByFireStation(String stationNumber) {
-    FireStationResponseDTO fireStationResponseDTO = getAllPersonsByFireStationNumber(stationNumber);
+  public Set<String> getPhoneNumbersByFireStation(String stationNumber) {
+    FireStationPersonDTO fireStationResponseDTO = getAllPersonsByFireStationNumber(stationNumber);
     Set<String> phoneNumbers = new HashSet<>();
     for (CoveredPersonDTO person : fireStationResponseDTO.coveredPersons()) {
       phoneNumbers.add(person.phoneNumber());
@@ -87,6 +88,26 @@ public class SafetyNetService {
       infoPersons.add(currentInfoPerson);
     }
     return infoPersons;
+  }
+
+  public List<FirePersonDTO> getPersonsAndFireStationByAddress(String address) {
+    List<Person> persons = safetyNetRepository.findAllPersons();
+    FireStation fireStation = safetyNetRepository.findFireStationByAddress(address);
+
+    List<FirePersonDTO> firePersons = new ArrayList<>();
+    
+    for (Person person : persons) {
+      if (person.address().equals(address)) {
+        // Get that person's medical records to find age
+        MedicalRecord medicalRecord = safetyNetRepository.findMedicalRecordsByFirstAndLastName(person.firstName(), person.lastName());
+
+        // Create person DTO for /fire endpoint
+        FirePersonDTO currentFirePerson = new FirePersonDTO(fireStation.stationNumber(), person.firstName(), person.lastName(), person.phone(), medicalRecord.medications(), medicalRecord.allergies());
+        firePersons.add(currentFirePerson);
+      }
+    }
+
+    return firePersons;
   }
 
   public List<String> getAllEmailsByCity(String city) {

@@ -155,6 +155,15 @@ public class SafetyNetRepository {
     return currentFirestations;
   }
 
+  public FireStation findFireStationByAddress(String address) {
+    for (FireStation fireStation : firestations) {
+      if (fireStation.address().equals(address)) {
+        return fireStation;
+      }
+    }
+    return null;
+  }
+
   public MedicalRecord findMedicalRecordsByFirstAndLastName(String firstName, String lastName) {
     MedicalRecord currentMedicalRecords = null;
 
