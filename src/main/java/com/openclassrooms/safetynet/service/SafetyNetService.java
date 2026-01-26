@@ -9,9 +9,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.openclassrooms.safetynet.domain.ChildPersonDTO;
 import com.openclassrooms.safetynet.domain.CoveredPersonDTO;
 import com.openclassrooms.safetynet.domain.FirePersonDTO;
 import com.openclassrooms.safetynet.domain.FireResponseDTO;
@@ -157,6 +159,25 @@ public class SafetyNetService {
       floodResponseDTO.add(new FloodResponseDTO(stationNumber, floodResponse));
     }
     return floodResponseDTO;
+  }
+
+  public List<ChildPersonDTO> getChildrenAndFamiliesByAddress(String address) {
+    List<ChildPersonDTO> childDTOList = new ArrayList<>();
+    List<Person> personsAtHousehold = safetyNetRepository.findPersonsByAddress(address);
+    
+    for (Person person : personsAtHousehold) {
+      int age = getAgeByName(person.firstName(), person.lastName());
+      if (age < 18) {
+        List<String> familyMembers = personsAtHousehold.stream()
+          .filter(p -> !(p.firstName().equals(person.firstName()) && p.lastName().equals(person.lastName())))
+          .map(p -> p.firstName() + " " + p.lastName())
+          .collect(Collectors.toList());
+        ChildPersonDTO childPersonDTO = new ChildPersonDTO(person.firstName(), person.lastName(), age, familyMembers);
+        childDTOList.add(childPersonDTO);
+      }
+    }
+
+    return childDTOList;
   }
 
 }
