@@ -1,26 +1,70 @@
 package com.openclassrooms.safetynet.controller;
 
-import java.util.List;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.openclassrooms.safetynet.domain.InfoPersonDTO;
-import com.openclassrooms.safetynet.service.SafetyNetService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.openclassrooms.safetynet.domain.Person;
+import com.openclassrooms.safetynet.service.PersonService;
+
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.server.ResponseStatusException;
+
+
 
 @Controller
+@RequestMapping("/person")
 public class PersonController {
-private final SafetyNetService safetyNetService;
+private final PersonService personService;
 
-  public PersonController(SafetyNetService safetyNetService) {
-    this.safetyNetService = safetyNetService;
+  public PersonController(PersonService personService) {
+    this.personService = personService;
   }
 
-  @GetMapping("/person")
-  public ResponseEntity<List<InfoPersonDTO>> findByLastName(@RequestParam String lastName) {
-    List<InfoPersonDTO> persons = safetyNetService.findPersonsByLastName(lastName);
-    return ResponseEntity.ok(persons);
+  @GetMapping("/{firstLastName}")
+  public ResponseEntity<Person> getPersonByFirstLastName(@PathVariable String firstLastName) {
+    Person person = personService.findPersonByFirstLastName(firstLastName);
+    return ResponseEntity.ok(person);
+  }
+  
+
+  @PostMapping
+  public ResponseEntity<Person> createPerson(@RequestBody Person newPersonRequest) throws Exception {
+    Person savedPerson = personService.createPerson(newPersonRequest);
+    return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
+  }
+
+  @PutMapping("/{firstLastName}")
+  public ResponseEntity<Person> updatePerson(@PathVariable String firstLastName, @RequestBody Person personUpdates) throws Exception {
+    String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
+    Person person = personService.findPersonByFirstLastName(correctedFullName);
+    if (person == null) {
+      String errorAddOn = "";
+      if (!correctedFullName.contains(" ")) {
+        errorAddOn = " Make sure your url endpoint is in the format: /person/<Firstname>_<Lastname>";
+      }
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, correctedFullName + " not found." + errorAddOn);
+    }
+    Person updatedPerson = personService.updatePersonInfo(
+      new Person(person.firstName(), person.lastName(), personUpdates.address(), personUpdates.city(), personUpdates.zip(), personUpdates.phone(), personUpdates.email())
+    );
+    return ResponseEntity.ok(updatedPerson);
+  }
+
+  @DeleteMapping("/{firstLastName}")
+  public ResponseEntity<String> deletePerson(@PathVariable String firstLastName) throws Exception {
+    Person person = personService.findPersonByFirstLastName(firstLastName);
+    if (person == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, firstLastName + " not found");
+    }
+    personService.removePerson(person);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
