@@ -41,7 +41,7 @@ private final PersonService personService;
     return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
   }
 
-  @PutMapping("/{firstLastName}")
+  @PutMapping("/{firstLastName}") // TODO: Fix update logic (in-place updates don't work?)
   public ResponseEntity<Person> updatePerson(@PathVariable String firstLastName, @RequestBody Person personUpdates) throws Exception {
     String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
     Person person = personService.findPersonByFirstLastName(correctedFullName);
@@ -60,7 +60,8 @@ private final PersonService personService;
 
   @DeleteMapping("/{firstLastName}")
   public ResponseEntity<String> deletePerson(@PathVariable String firstLastName) throws Exception {
-    Person person = personService.findPersonByFirstLastName(firstLastName);
+    String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
+    Person person = personService.findPersonByFirstLastName(correctedFullName);
     if (person == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, firstLastName + " not found");
     }

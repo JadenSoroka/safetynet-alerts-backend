@@ -21,7 +21,6 @@ import tools.jackson.databind.node.ObjectNode;
 public class PersonRepository {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final List<Person> persons = new ArrayList<>();
-  private JsonNode globalRootNote = null;
   
   @PostConstruct
   public void loadPersons() {
@@ -123,7 +122,7 @@ public class PersonRepository {
   public Person findPersonsByFirstLastName(String firstLastName) {
     Person currentPerson = null;
     for (Person person : persons) {
-      if ((person.firstName() + " " + person.lastName()).equals(firstLastName)) {
+      if ((person.firstName().toLowerCase() + " " + person.lastName().toLowerCase()).equals(firstLastName)) {
         currentPerson = person;
       }
     }
