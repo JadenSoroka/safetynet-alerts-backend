@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.openclassrooms.safetynet.domain.ChildPersonDTO;
 import com.openclassrooms.safetynet.domain.CoveredPersonDTO;
@@ -34,7 +36,7 @@ public class SafetyNetService {
     this.safetyNetRepository = safetyNetRepository;
   }
 
-  public int getAgeByName(String firstName, String lastName) {
+  public int getAge(String firstName, String lastName) {
     // Get that person's medical records to find age
     MedicalRecord medicalRecord = safetyNetRepository.findMedicalRecordsByFirstAndLastName(firstName, lastName);
 
@@ -64,7 +66,7 @@ public class SafetyNetService {
             person.phone()
           ));
 
-          int age = getAgeByName(person.firstName(), person.lastName());
+          int age = getAge(person.firstName(), person.lastName());
 
           if (age >= 18) {
             adultCount++;
@@ -92,7 +94,7 @@ public class SafetyNetService {
   public List<InfoPersonDTO> findPersonsByLastName(String lastName) {
     List<Person> persons = safetyNetRepository.findPersonsByLastName(lastName);
     if (persons.isEmpty()) {
-      return null;
+      return List.of();
     }
     List<InfoPersonDTO> infoPersons = new ArrayList<>();
     InfoPersonDTO currentInfoPerson;
@@ -112,6 +114,9 @@ public class SafetyNetService {
   public FireResponseDTO getPersonsAndFireStationByAddress(String address) {
     List<Person> persons = safetyNetRepository.findAllPersons();
     FireStation fireStation = safetyNetRepository.findFireStationByAddress(address);
+    if (fireStation == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No fire station found at address '" + address + "'");
+    }
 
     List<FirePersonDTO> firePersons = new ArrayList<>();
     
@@ -155,7 +160,7 @@ public class SafetyNetService {
 
         for (Person person : persons) {
           // For each person covered by that station, get their age, medical records, assign their info to the floodPersonDTO, and add them to the list of floodPersons
-          int age = getAgeByName(person.firstName(), person.lastName());
+          int age = getAge(person.firstName(), person.lastName());
           MedicalRecord medicalRecord = safetyNetRepository.findMedicalRecordsByFirstAndLastName(person.firstName(), person.lastName());
           FloodPersonDTO floodPersonDTO = new FloodPersonDTO(person.firstName(), person.lastName(), person.phone(), age, medicalRecord.medications(), medicalRecord.allergies());
           floodPersons.add(floodPersonDTO);
@@ -174,7 +179,7 @@ public class SafetyNetService {
     List<Person> personsAtHousehold = safetyNetRepository.findPersonsByAddress(address);
     
     for (Person person : personsAtHousehold) {
-      int age = getAgeByName(person.firstName(), person.lastName());
+      int age = getAge(person.firstName(), person.lastName());
       if (age < 18) {
         List<String> familyMembers = personsAtHousehold.stream()
           .filter(p -> !(p.firstName().equals(person.firstName()) && p.lastName().equals(person.lastName())))
