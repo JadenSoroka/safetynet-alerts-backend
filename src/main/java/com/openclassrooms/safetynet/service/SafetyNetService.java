@@ -91,11 +91,19 @@ public class SafetyNetService {
 
   public List<InfoPersonDTO> findPersonsByLastName(String lastName) {
     List<Person> persons = safetyNetRepository.findPersonsByLastName(lastName);
+    if (persons.isEmpty()) {
+      return null;
+    }
     List<InfoPersonDTO> infoPersons = new ArrayList<>();
+    InfoPersonDTO currentInfoPerson;
 
     for (Person person : persons) {
       MedicalRecord records = safetyNetRepository.findMedicalRecordsByFirstAndLastName(person.firstName(), person.lastName());
-      InfoPersonDTO currentInfoPerson = new InfoPersonDTO(person.firstName(), person.lastName(), person.email(), records.medications(), records.allergies());
+      if (records == null) {
+        currentInfoPerson = new InfoPersonDTO(person.firstName(), person.lastName(), person.email(), List.of(), List.of());
+      } else {
+        currentInfoPerson = new InfoPersonDTO(person.firstName(), person.lastName(), person.email(), records.medications(), records.allergies());
+      }
       infoPersons.add(currentInfoPerson);
     }
     return infoPersons;

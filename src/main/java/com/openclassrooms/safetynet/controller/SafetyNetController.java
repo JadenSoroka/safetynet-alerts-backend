@@ -58,6 +58,9 @@ public class SafetyNetController {
   @GetMapping("/personInfo")
   public ResponseEntity<List<InfoPersonDTO>> findByLastName(@RequestParam String lastName) {
     List<InfoPersonDTO> persons = safetyNetService.findPersonsByLastName(lastName);
+    if (persons == null) {
+      return ResponseEntity.notFound().build();
+    }
     return ResponseEntity.ok(persons);
   }
 

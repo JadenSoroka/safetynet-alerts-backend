@@ -51,10 +51,13 @@ public class SafetyNetControllerTest {
   }
 
   @Test
-  void GIVEN_invalid_last_name_THEN_404_response() throws Exception {
+  void GIVEN_invalid_last_name_THEN_200_response_AND_returns_empty_array() throws Exception {
     this.mvc.perform(get("/personInfo")
         .param("lastName", "Soroka"))
-      .andExpect(status().isNotFound());
+      .andExpectAll(
+        status().isOk(),
+        content().contentType("application/json")
+    );
   }
 
   @Test

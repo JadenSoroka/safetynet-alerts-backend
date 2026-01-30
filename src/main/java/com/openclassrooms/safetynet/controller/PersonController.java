@@ -41,16 +41,12 @@ private final PersonService personService;
     return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
   }
 
-  @PutMapping("/{firstLastName}") // TODO: Fix update logic (in-place updates don't work?)
+  @PutMapping("/{firstLastName}")
   public ResponseEntity<Person> updatePerson(@PathVariable String firstLastName, @RequestBody Person personUpdates) throws Exception {
     String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
     Person person = personService.findPersonByFirstLastName(correctedFullName);
     if (person == null) {
-      String errorAddOn = "";
-      if (!correctedFullName.contains(" ")) {
-        errorAddOn = " Make sure your url endpoint is in the format: /person/<Firstname>_<Lastname>";
-      }
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, correctedFullName + " not found." + errorAddOn);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, correctedFullName + " not found.");
     }
     Person updatedPerson = personService.updatePersonInfo(
       new Person(person.firstName(), person.lastName(), personUpdates.address(), personUpdates.city(), personUpdates.zip(), personUpdates.phone(), personUpdates.email())

@@ -70,7 +70,7 @@ public class PersonRepository {
     }
   }
 
-  public void updatePerson(Person person) throws IOException {
+  public Person updatePerson(Person newPerson) throws IOException {
     try (InputStream inputStream = getClass().getClassLoader()
       .getResourceAsStream("data.json")) {
         if (inputStream == null) {
@@ -80,15 +80,13 @@ public class PersonRepository {
         
         ObjectNode rootObjectNode = (ObjectNode) rootNode;
 
-        for (Person dbPerson : persons) {
-          if (dbPerson.firstName().toLowerCase().equals(person.firstName()) && dbPerson.lastName().toLowerCase().equals(person.lastName())) {
-            persons.remove(dbPerson);
-            persons.add(person);
-          }
-        }
+        removePersonFromPersons(newPerson);
+        persons.add(newPerson);
         
         rootObjectNode.putPOJO("persons", persons);
         objectMapper.writeValue(new File("src/main/resources/data.json"), rootObjectNode);
+        System.out.println("Person Updated: " + newPerson);
+        return newPerson;
     } catch (IOException e) {
       throw new RuntimeException("Failed to load data.json", e);
     }
@@ -104,13 +102,7 @@ public class PersonRepository {
         
         ObjectNode rootObjectNode = (ObjectNode) rootNode;
 
-        Iterator<Person> iterator = persons.iterator();
-        while (iterator.hasNext()) {
-          Person dbPerson = iterator.next();
-          if (dbPerson.firstName().equals(person.firstName()) && dbPerson.lastName().equals(person.lastName())) {
-            iterator.remove();
-          }
-        }
+        removePersonFromPersons(person);
         
         rootObjectNode.putPOJO("persons", persons);
         objectMapper.writeValue(new File("src/main/resources/data.json"), rootObjectNode);
@@ -118,11 +110,22 @@ public class PersonRepository {
       throw new RuntimeException("Failed to load data.json", e);
     }
   }
+
+  private void removePersonFromPersons(Person person) {
+    Iterator<Person> iterator = persons.iterator();
+    while (iterator.hasNext()) {
+      Person dbPerson = iterator.next();
+      if (dbPerson.firstName().equals(person.firstName()) && dbPerson.lastName().equals(person.lastName())) {
+        iterator.remove();
+      }
+    }
+  }
     
   public Person findPersonsByFirstLastName(String firstLastName) {
     Person currentPerson = null;
     for (Person person : persons) {
       if ((person.firstName().toLowerCase() + " " + person.lastName().toLowerCase()).equals(firstLastName)) {
+        System.out.println("Person found: " + person);
         currentPerson = person;
       }
     }
@@ -142,9 +145,8 @@ public class PersonRepository {
 
   public Person updatePersonInfo(Person person) throws Exception {
     try {
-      updatePerson(person);
-      System.out.println("Person Updated: " + person);
-      return person;
+      Person updatedPerson = updatePerson(person);
+      return updatedPerson;
     } catch (JacksonException e) {
       e.printStackTrace();
     }
