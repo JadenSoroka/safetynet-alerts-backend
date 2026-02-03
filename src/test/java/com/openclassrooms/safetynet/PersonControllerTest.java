@@ -1,16 +1,15 @@
 package com.openclassrooms.safetynet;
 
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import com.openclassrooms.safetynet.service.SafetyNetService;
+import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class PersonServiceTest {
+public class PersonControllerTest {
 
-  @Mock
-  private SafetyNetService personService;
+  @Autowired
+  private MockMvc mvc;
 }

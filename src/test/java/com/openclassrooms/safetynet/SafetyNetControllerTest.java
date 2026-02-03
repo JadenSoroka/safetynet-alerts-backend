@@ -125,6 +125,35 @@ public class SafetyNetControllerTest {
       .andExpect(status().isNotFound());
   }
 
+  // Tests for /flood/stations
+  @Test 
+  void GIVEN_list_of_valid_station_numbers_THEN_200_response_AND_returns_all_covered_persons() throws Exception {
+    
+    this.mvc.perform(get("/flood/stations")
+        .param("stations", "1", "2"))
+      .andExpectAll(
+        status().isOk(),
+        jsonPath("$[0].stationNumber").value("1"),
+        jsonPath("$[0].households").isNotEmpty(),
+        jsonPath("$[1].stationNumber").value("2"),
+        jsonPath("$[0].households").isNotEmpty()
+      );
+  }
+
+  @Test 
+  void GIVEN_invalid_station_numbers_THEN_200_response_AND_returns_station_number_and_empty_households_array() throws Exception {
+    
+    this.mvc.perform(get("/flood/stations")
+        .param("stations", "99999", "2"))
+      .andExpectAll(
+        status().isOk(),
+        jsonPath("$[0].stationNumber").value("99999"),
+        jsonPath("$[0].households").isEmpty(),
+        jsonPath("$[1].stationNumber").value("2"),
+        jsonPath("$[1].households").isNotEmpty()
+      );
+  }
+
   // Tests for /personInfo
   @Test
   void GIVEN_valid_last_name_THEN_200_response_AND_returns_all_matching_persons() throws Exception {

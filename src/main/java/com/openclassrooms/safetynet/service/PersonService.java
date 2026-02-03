@@ -14,7 +14,9 @@ public class PersonService {
   }
 
   public Person findPersonByFirstLastName(String firstLastName) {
-    return personRepository.findPersonsByFirstLastName(firstLastName);
+    String[] splitFirstLastName = firstLastName.split("_");
+    String formattedFirstLastName = splitFirstLastName[0].toLowerCase() + " " + splitFirstLastName[1].toLowerCase();
+    return personRepository.findPersonsByFirstLastName(formattedFirstLastName);
   }
 
   public Person createPerson(Person person) throws Exception {
