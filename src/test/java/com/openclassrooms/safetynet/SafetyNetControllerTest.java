@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@DisplayName("Person Controller Tests")
 public class SafetyNetControllerTest {
 
   @Autowired
