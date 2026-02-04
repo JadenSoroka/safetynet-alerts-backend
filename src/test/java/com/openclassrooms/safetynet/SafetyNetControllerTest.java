@@ -1,6 +1,5 @@
 package com.openclassrooms.safetynet;
 
-
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +168,7 @@ public class SafetyNetControllerTest {
   @Test
   void GIVEN_invalid_last_name_THEN_200_response_AND_returns_empty_array() throws Exception {
     this.mvc.perform(get("/personInfo")
-        .param("lastName", "Soroka"))
+        .param("lastName", "Test"))
       .andExpectAll(
         status().isOk(),
         jsonPath("$").isArray(),

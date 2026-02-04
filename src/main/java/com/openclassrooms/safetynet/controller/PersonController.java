@@ -30,7 +30,11 @@ private final PersonService personService;
 
   @GetMapping("/{firstLastName}")
   public ResponseEntity<Person> getPersonByFirstLastName(@PathVariable String firstLastName) {
-    Person person = personService.findPersonByFirstLastName(firstLastName);
+    String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
+    Person person = personService.findPersonByFirstLastName(correctedFullName);
+    if (person == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, firstLastName.replace("_", " ") + " not found.");
+    }
     return ResponseEntity.ok(person);
   }
   
@@ -46,12 +50,12 @@ private final PersonService personService;
     String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
     Person person = personService.findPersonByFirstLastName(correctedFullName);
     if (person == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, correctedFullName + " not found.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, firstLastName.replace("_", " ") + " not found.");
     }
-    Person updatedPerson = personService.updatePersonInfo(
+    personService.updatePersonInfo(
       new Person(person.firstName(), person.lastName(), personUpdates.address(), personUpdates.city(), personUpdates.zip(), personUpdates.phone(), personUpdates.email())
     );
-    return ResponseEntity.ok(updatedPerson);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   @DeleteMapping("/{firstLastName}")
