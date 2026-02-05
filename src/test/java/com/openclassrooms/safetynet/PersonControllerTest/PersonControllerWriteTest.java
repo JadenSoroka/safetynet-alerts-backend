@@ -69,7 +69,7 @@ public class PersonControllerWriteTest {
       mvc.perform(put("/person/Eric_Cadigan")
           .content(objectMapper.writeValueAsString(mockPerson))
           .contentType("application/json"))
-        .andExpectAll(status().isNoContent());
+        .andExpect(status().isNoContent());
     }
   }
 
@@ -84,7 +84,7 @@ public class PersonControllerWriteTest {
       mvc.perform(delete("/person/Eric_Cadigan")
           .content(objectMapper.writeValueAsString(mockPerson))
           .contentType("application/json"))
-        .andExpectAll(status().isNoContent());
+        .andExpect(status().isNoContent());
     }
   }
 }

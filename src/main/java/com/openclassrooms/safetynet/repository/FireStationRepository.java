@@ -60,7 +60,7 @@ public class FireStationRepository {
         return currentFireStations;
     }
 
-    public void createFireStation(FireStation newFireStation) {
+    public FireStation createFireStation(FireStation newFireStation) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
             if (inputStream == null) {
@@ -74,6 +74,7 @@ public class FireStationRepository {
             
             rootObjectNode.putPOJO("firestations", fireStations);
             objectMapper.writeValue(new File("src/main/resources/data.json"), rootObjectNode);
+            return newFireStation;
         } catch (IOException e) {
         throw new RuntimeException("Failed to load data.json", e);
         }    

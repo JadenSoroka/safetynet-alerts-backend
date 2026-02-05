@@ -13,8 +13,8 @@ public class FireStationService {
         this.fireStationRepository = fireStationRepository;
     }
 
-    public void createFireStation(FireStation newFireStationRequest) {
-        fireStationRepository.createFireStation(newFireStationRequest);
+    public FireStation createFireStation(FireStation newFireStationRequest) {
+        return fireStationRepository.createFireStation(newFireStationRequest);
     }
 
     public boolean updateFireStation(String address, FireStation updatedFireStation) {

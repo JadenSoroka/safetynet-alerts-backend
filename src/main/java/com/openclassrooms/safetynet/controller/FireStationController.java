@@ -14,8 +14,6 @@ import com.openclassrooms.safetynet.service.FireStationService;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.client.HttpClientErrorException;
-
 
 @Controller
 @RequestMapping("/firestation")
@@ -30,8 +28,8 @@ public class FireStationController {
   
   @PostMapping
   public ResponseEntity<FireStation> AddFireStation(@RequestBody FireStation newFireStationRequest) {
-    fireStationService.createFireStation(newFireStationRequest);
-    return new ResponseEntity<>(newFireStationRequest, HttpStatus.CREATED);
+    FireStation newFireStation = fireStationService.createFireStation(newFireStationRequest);
+    return new ResponseEntity<>(newFireStation, HttpStatus.CREATED);
   }
 
   @PutMapping("/{address}")
