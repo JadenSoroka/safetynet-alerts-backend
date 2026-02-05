@@ -68,6 +68,17 @@ public class FireStationControllerWriteTest {
                     .contentType("application/json"))
                 .andExpect(status().isNoContent());
         }
+
+        @Test
+        void GIVEN_invalid_address_THEN_204_response() throws Exception {
+            FireStation mockFireStation = new FireStation("123 Sesame S", "5");
+            when(fireStationService.updateFireStation(any(), any())).thenReturn(false);
+
+            mvc.perform(put("/firestation/123_Sesame_s")
+                    .content(objectMapper.writeValueAsString(mockFireStation))
+                    .contentType("application/json"))
+                .andExpect(status().isNotFound());
+        }
     }
 
     @Nested
@@ -82,6 +93,17 @@ public class FireStationControllerWriteTest {
                     .content(objectMapper.writeValueAsString(mockFireStation))
                     .contentType("application/json"))
                 .andExpect(status().isNoContent());
+        }
+
+        @Test
+        void GIVEN_invalid_address_THEN_204_response() throws Exception {
+            FireStation mockFireStation = new FireStation("123 Sesame S", "5");
+            when(fireStationService.deleteFireStation(any())).thenReturn(false);
+
+            mvc.perform(delete("/firestation/123_Sesame_s")
+                    .content(objectMapper.writeValueAsString(mockFireStation))
+                    .contentType("application/json"))
+                .andExpect(status().isNotFound());
         }
     }
 }
