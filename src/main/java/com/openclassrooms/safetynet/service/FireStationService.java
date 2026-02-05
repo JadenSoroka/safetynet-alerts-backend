@@ -19,14 +19,12 @@ public class FireStationService {
 
     public boolean updateFireStation(String address, FireStation updatedFireStation) {
         String formattedAddress = address.replaceAll("_", " ").toLowerCase();
-        boolean fireStationFound = fireStationRepository.updateFireStation(formattedAddress, updatedFireStation);
-        return fireStationFound;
+        return fireStationRepository.updateFireStation(formattedAddress, updatedFireStation);
     }
 
     public boolean deleteFireStation(String address) {
         String formattedAddress = address.replaceAll("_", " ").toLowerCase();
-        boolean fireStationFound = fireStationRepository.deleteFireStation(formattedAddress);
-        return fireStationFound;
+        return fireStationRepository.deleteFireStation(formattedAddress);
     }
 
 }

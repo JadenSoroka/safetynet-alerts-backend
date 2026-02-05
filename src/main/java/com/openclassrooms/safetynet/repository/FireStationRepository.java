@@ -47,19 +47,6 @@ public class FireStationRepository {
         }
     }
 
-    public FireStation findFireStationByAddress(String address) {
-        FireStation currentFireStations = null;
-
-        for (FireStation fireStation : fireStations) {
-            if (fireStation.address().equals(address)) {
-                currentFireStations = fireStation;
-                break;
-            }
-        }
-
-        return currentFireStations;
-    }
-
     public FireStation createFireStation(FireStation newFireStation) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
