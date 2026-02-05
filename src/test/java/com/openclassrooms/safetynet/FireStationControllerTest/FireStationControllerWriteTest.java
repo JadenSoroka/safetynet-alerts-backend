@@ -70,7 +70,7 @@ public class FireStationControllerWriteTest {
         }
 
         @Test
-        void GIVEN_invalid_address_THEN_204_response() throws Exception {
+        void GIVEN_invalid_address_THEN_404_response() throws Exception {
             FireStation mockFireStation = new FireStation("123 Sesame S", "5");
             when(fireStationService.updateFireStation(any(), any())).thenReturn(false);
 
@@ -96,7 +96,7 @@ public class FireStationControllerWriteTest {
         }
 
         @Test
-        void GIVEN_invalid_address_THEN_204_response() throws Exception {
+        void GIVEN_invalid_address_THEN_404_response() throws Exception {
             FireStation mockFireStation = new FireStation("123 Sesame S", "5");
             when(fireStationService.deleteFireStation(any())).thenReturn(false);
 
