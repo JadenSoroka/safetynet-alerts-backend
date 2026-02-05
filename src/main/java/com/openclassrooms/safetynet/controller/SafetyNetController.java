@@ -24,8 +24,8 @@ public class SafetyNetController {
     this.safetyNetService = safetyNetService;
   }
   @GetMapping("/firestation")
-  public ResponseEntity<FireStationPersonDTO> getPersonsByStationNumber(@RequestParam String stationNumber) {
-    FireStationPersonDTO fireStationResponseDTO = safetyNetService.getAllPersonsByFireStationNumber(stationNumber);
+  public ResponseEntity<FireStationPersonDTO> getPersonsByStationNumber(@RequestParam String station) {
+    FireStationPersonDTO fireStationResponseDTO = safetyNetService.getAllPersonsByFireStationNumber(station);
     return ResponseEntity.ok(fireStationResponseDTO);
   }
 

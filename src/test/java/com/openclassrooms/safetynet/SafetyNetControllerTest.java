@@ -38,7 +38,7 @@ public class SafetyNetControllerTest {
       List<String> validAddresses = List.of("644 Gershwin Cir", "908 73rd St", "947 E. Rose Dr");
       
       mvc.perform(get("/firestation")
-          .param("stationNumber", "1"))
+          .param("station", "1"))
         .andExpectAll(
           status().isOk(),
           content().contentType("application/json"),
@@ -52,7 +52,7 @@ public class SafetyNetControllerTest {
     @Test
     void GIVEN_invalid_station_number_THEN_200_response_AND_returns_empty_array_and_zero_adults_and_zero_children() throws Exception {    
       mvc.perform(get("/firestation")
-          .param("stationNumber", "99999"))
+          .param("station", "99999"))
         .andExpectAll(
           status().isOk(),
           jsonPath("$.coveredPersons").isArray(),

@@ -130,7 +130,7 @@ public class SafetyNetService {
         firePersons.add(currentFirePerson);
       }
     }
-    FireResponseDTO fireResponseDTO = new FireResponseDTO(fireStation.stationNumber(), firePersons);
+    FireResponseDTO fireResponseDTO = new FireResponseDTO(fireStation.station(), firePersons);
 
     return fireResponseDTO;
   }

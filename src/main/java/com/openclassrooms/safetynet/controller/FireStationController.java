@@ -1,18 +1,55 @@
 package com.openclassrooms.safetynet.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.openclassrooms.safetynet.service.SafetyNetService;
+import com.openclassrooms.safetynet.domain.FireStation;
+import com.openclassrooms.safetynet.service.FireStationService;
+
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.HttpClientErrorException;
+
 
 @Controller
+@RequestMapping("/firestation")
 public class FireStationController {
-  private final SafetyNetService safetyNetService;
+  private final FireStationService fireStationService;
 
-  public FireStationController(SafetyNetService safetyNetService) {
-    this.safetyNetService = safetyNetService;
+  public FireStationController(FireStationService fireStationService) {
+    this.fireStationService = fireStationService;
+  }
+
+  // GET mapping is already satisfied in the SafetyNetController
+  
+  @PostMapping
+  public ResponseEntity<FireStation> AddFireStation(@RequestBody FireStation newFireStationRequest) {
+    fireStationService.createFireStation(newFireStationRequest);
+    return new ResponseEntity<>(newFireStationRequest, HttpStatus.CREATED);
+  }
+
+  @PutMapping("/{address}")
+  public ResponseEntity<FireStation> UpdateFireStation(@PathVariable String address, @RequestBody FireStation updatedFireStation) {
+    boolean fireStationFound = fireStationService.updateFireStation(address, updatedFireStation);
+    if (!fireStationFound) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Address at '" + address.replaceAll("_", " ") + "' not found");
+    }
+    return ResponseEntity.noContent().build();
+  }
+
+  @DeleteMapping("/{address}")
+  public ResponseEntity<FireStation> DeleteFireStation(@PathVariable String address) {
+    boolean fireStationFound = fireStationService.deleteFireStation(address);
+    if (!fireStationFound) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Address at '" + address.replaceAll("_", " ") + "' not found");
+    }
+    return ResponseEntity.noContent().build();
   }
   
 }

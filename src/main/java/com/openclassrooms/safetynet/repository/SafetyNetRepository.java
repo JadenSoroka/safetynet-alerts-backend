@@ -148,7 +148,7 @@ public class SafetyNetRepository {
   public List<FireStation> findFireStationsByStationNumber(String stationNumber) {
     List<FireStation> currentFirestations = new ArrayList<>();
     for (FireStation firestation : firestations) {
-      if (firestation.stationNumber().equals(stationNumber)) {
+      if (firestation.station().equals(stationNumber)) {
         currentFirestations.add(firestation);
       }
     }
