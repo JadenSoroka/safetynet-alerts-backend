@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import com.openclassrooms.safetynet.domain.Person;
 
 import jakarta.annotation.PostConstruct;
-import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -51,26 +50,17 @@ public class PersonRepository {
     }
   }
 
-  public void addPerson(Person person) throws IOException {
-    try (InputStream inputStream = getClass().getClassLoader()
-      .getResourceAsStream("data.json")) {
-        if (inputStream == null) {
-          throw new RuntimeException("data.json not found");
-        }
-        JsonNode rootNode = objectMapper.readTree(inputStream);
-        
-        ObjectNode rootObjectNode = (ObjectNode) rootNode;
-
-        persons.add(person);
-        
-        rootObjectNode.putPOJO("persons", persons);
-        objectMapper.writeValue(new File("src/main/resources/data.json"), rootObjectNode);
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to load data.json", e);
+  public Person readPerson(String firstLastNameToMatch) {
+    for (Person dbPerson : persons) {
+      String dbPersonName = dbPerson.firstName().toLowerCase() + " " + dbPerson.lastName().toLowerCase();
+      if (dbPersonName.equals(firstLastNameToMatch.toLowerCase())) {
+        return dbPerson;
+      }
     }
+    return null;
   }
 
-  public Person updatePerson(Person newPerson) throws IOException {
+  public Person createPerson(Person newPerson) throws IOException {
     try (InputStream inputStream = getClass().getClassLoader()
       .getResourceAsStream("data.json")) {
         if (inputStream == null) {
@@ -80,19 +70,17 @@ public class PersonRepository {
         
         ObjectNode rootObjectNode = (ObjectNode) rootNode;
 
-        removePersonFromPersons(newPerson);
         persons.add(newPerson);
         
         rootObjectNode.putPOJO("persons", persons);
         objectMapper.writeValue(new File("src/main/resources/data.json"), rootObjectNode);
-        System.out.println("Person Updated: " + newPerson);
         return newPerson;
     } catch (IOException e) {
       throw new RuntimeException("Failed to load data.json", e);
     }
   }
 
-  public void deletePerson(Person person) throws IOException {
+  public boolean updatePerson(String firstLastNameToMatch, Person newPerson) throws IOException {
     try (InputStream inputStream = getClass().getClassLoader()
       .getResourceAsStream("data.json")) {
         if (inputStream == null) {
@@ -102,64 +90,85 @@ public class PersonRepository {
         
         ObjectNode rootObjectNode = (ObjectNode) rootNode;
 
-        removePersonFromPersons(person);
+        boolean personFound = removePersonFromPersons(firstLastNameToMatch);
+        if (!personFound) {
+          return false;
+        }
+        persons.add(newPerson);
         
         rootObjectNode.putPOJO("persons", persons);
         objectMapper.writeValue(new File("src/main/resources/data.json"), rootObjectNode);
+        return true;
     } catch (IOException e) {
       throw new RuntimeException("Failed to load data.json", e);
     }
   }
 
-  private void removePersonFromPersons(Person person) {
+  public boolean deletePerson(String firstLastNameToMatch) throws IOException {
+    try (InputStream inputStream = getClass().getClassLoader()
+      .getResourceAsStream("data.json")) {
+        if (inputStream == null) {
+          throw new RuntimeException("data.json not found");
+        }
+        JsonNode rootNode = objectMapper.readTree(inputStream);
+        
+        ObjectNode rootObjectNode = (ObjectNode) rootNode;
+
+        boolean personFound = removePersonFromPersons(firstLastNameToMatch);
+        if (!personFound) {
+          return false;
+        }
+        
+        rootObjectNode.putPOJO("persons", persons);
+        objectMapper.writeValue(new File("src/main/resources/data.json"), rootObjectNode);
+        return true;
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to load data.json", e);
+    }
+  }
+
+  private boolean removePersonFromPersons(String oldFirstLastName) {
     Iterator<Person> iterator = persons.iterator();
     while (iterator.hasNext()) {
       Person dbPerson = iterator.next();
-      if (dbPerson.firstName().equals(person.firstName()) && dbPerson.lastName().equals(person.lastName())) {
+      String dbPersonName = dbPerson.firstName().toLowerCase() + " " + dbPerson.lastName().toLowerCase();
+      if (dbPersonName.equals(oldFirstLastName.toLowerCase())) {
         iterator.remove();
+        return true;
       }
     }
+    return false;
   }
     
-  public Person findPersonsByFirstLastName(String firstLastName) {
-    Person currentPerson = null;
-    for (Person person : persons) {
-      if ((person.firstName().toLowerCase() + " " + person.lastName().toLowerCase()).equals(firstLastName)) {
-        System.out.println("Person found: " + person);
-        currentPerson = person;
-      }
-    }
-    return currentPerson;
-  }
+  
 
-  public Person savePerson(Person person) throws Exception{
-    try {
-      addPerson(person);
-      System.out.println("New person added!");
-      return person;
-    } catch (JacksonException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
+  // public Person savePerson(Person person) throws Exception{
+  //   try {
+  //     addPerson(person);
+  //     System.out.println("New person added!");
+  //     return person;
+  //   } catch (JacksonException e) {
+  //     e.printStackTrace();
+  //   }
+  //   return null;
+  // }
 
-  public Person updatePersonInfo(Person person) throws Exception {
-    try {
-      Person updatedPerson = updatePerson(person);
-      return updatedPerson;
-    } catch (JacksonException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
+  // public Person updatePersonInfo(Person person) throws Exception {
+  //   try {
+  //     Person updatedPerson = updatePerson(person);
+  //     return updatedPerson;
+  //   } catch (JacksonException e) {
+  //     e.printStackTrace();
+  //   }
+  //   return null;
+  // }
 
-  public void removePerson(Person person) throws Exception {
-    try {
-      deletePerson(person);
-      System.out.println(person.firstName() + " " + person.lastName() + " has been deleted!");
-    } catch (JacksonException e) {
-      e.printStackTrace();
-    }
-  }
+  // public void removePerson(Person person) throws Exception {
+  //   try {
+  //     deletePerson(person);
+  //   } catch (JacksonException e) {
+  //     e.printStackTrace();
+  //   }
+  // }
 
 }

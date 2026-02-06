@@ -13,6 +13,10 @@ public class MedicalRecordService {
         this.medicalRecordRepository = medicalRecordRepository;
     }
 
+    public MedicalRecord readMedicalRecord(String firstLastNameToMatch) {
+        return medicalRecordRepository.readPerson(firstLastNameToMatch);
+    }
+
     public MedicalRecord createMedicalRecord(MedicalRecord newMedicalRecordRequest) {
         return medicalRecordRepository.createMedicalRecord(newMedicalRecordRequest);
     }
@@ -26,5 +30,4 @@ public class MedicalRecordService {
         String formattedFirstLastName = firstLastName.replace("_", " ").toLowerCase();
         return medicalRecordRepository.deleteMedicalRecord(formattedFirstLastName);
     }
-
 }

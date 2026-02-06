@@ -68,6 +68,16 @@ public class MedicalRecordRepository {
         }
     }
 
+    public MedicalRecord readPerson(String firstLastNameToMatch) {
+        for (MedicalRecord dbMedicalRecord : medicalRecords) {
+            String dbMedicalRecordName = dbMedicalRecord.firstName().toLowerCase() + " " + dbMedicalRecord.lastName().toLowerCase();
+            if (dbMedicalRecordName.equals(firstLastNameToMatch.toLowerCase())) {
+                return dbMedicalRecord;
+            }
+        }
+        return null;
+    }
+
     public MedicalRecord createMedicalRecord(MedicalRecord newMedicalRecord) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
@@ -136,17 +146,17 @@ public class MedicalRecordRepository {
 	}
     
     private boolean removeMedicalRecordFromMedicalRecords(String newFirstLastName) {
-        boolean medicalRecordFound = false;
         Iterator<MedicalRecord> iterator = medicalRecords.iterator();
         while (iterator.hasNext()) {
             MedicalRecord dbMedicalRecord = iterator.next();
             String dbMedicalRecordName = dbMedicalRecord.firstName().toLowerCase() + " " + dbMedicalRecord.lastName().toLowerCase();
             if (dbMedicalRecordName.equals(newFirstLastName)) {
                 iterator.remove();
-                medicalRecordFound = true;
-                break;
+                return true;
             }
         }
-        return medicalRecordFound;
+        return false;
     }
+
+    
 }

@@ -47,6 +47,16 @@ public class FireStationRepository {
         }
     }
 
+    public FireStation readFireStation(String addressToMatch) {
+        for (FireStation dbFireStation : fireStations) {
+            String dbFireStationAddress = dbFireStation.address().toLowerCase();
+            if (dbFireStationAddress.equals(addressToMatch.toLowerCase())) {
+                return dbFireStation;
+            }
+        }
+        return null;
+    }
+
     public FireStation createFireStation(FireStation newFireStation) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {

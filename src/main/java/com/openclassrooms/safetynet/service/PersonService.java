@@ -13,19 +13,19 @@ public class PersonService {
     this.personRepository = personRepository;
   }
 
-  public Person findPersonByFirstLastName(String firstLastName) {
-    return personRepository.findPersonsByFirstLastName(firstLastName);
+  public Person readPerson(String firstLastNameToMatch) {
+    return personRepository.readPerson(firstLastNameToMatch);
   }
 
   public Person createPerson(Person person) throws Exception {
-    return personRepository.savePerson(person);
+    return personRepository.createPerson(person);
   }
 
-  public Person updatePersonInfo(Person personUpdates) throws Exception {
-    return personRepository.updatePersonInfo(personUpdates);
+  public boolean updatePerson(String firstLastNameToMatch, Person personUpdates) throws Exception {
+    return personRepository.updatePerson(firstLastNameToMatch, personUpdates);
   }
 
-  public void removePerson(Person personToRemove) throws Exception {
-    personRepository.removePerson(personToRemove);
+  public boolean removePerson(String firstLastNameToMatch) throws Exception {
+    return personRepository.deletePerson(firstLastNameToMatch);
   }
 }

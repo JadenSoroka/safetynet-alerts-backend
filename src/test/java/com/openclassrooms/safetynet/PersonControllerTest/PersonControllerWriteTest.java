@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -64,7 +63,7 @@ public class PersonControllerWriteTest {
     @Test
     void GIVEN_valid_person_on_update_THEN_204_response() throws Exception {
       Person mockPerson = new Person("Eric", "Cadigan", "951 LoneTree Rd", "Culver", "97451", "123-456-7890", "gramps@email.com");
-      when(personService.findPersonByFirstLastName(any())).thenReturn(mockPerson);
+      when(personService.readPerson(any())).thenReturn(mockPerson);
       
       mvc.perform(put("/person/Eric_Cadigan")
           .content(objectMapper.writeValueAsString(mockPerson))
@@ -79,7 +78,7 @@ public class PersonControllerWriteTest {
     @Test
     void GIVEN_valid_person_on_delete_THEN_204_response() throws Exception {
       Person mockPerson = new Person("Eric", "Cadigan", "951 LoneTree Rd", "Culver", "97451", "123-456-7890", "gramps@email.com");
-      when(personService.findPersonByFirstLastName(any())).thenReturn(mockPerson);
+      when(personService.readPerson(any())).thenReturn(mockPerson);
   
       mvc.perform(delete("/person/Eric_Cadigan")
           .content(objectMapper.writeValueAsString(mockPerson))

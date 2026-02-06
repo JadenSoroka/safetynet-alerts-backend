@@ -1,5 +1,7 @@
 package com.openclassrooms.safetynet.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,39 +16,74 @@ import com.openclassrooms.safetynet.service.FireStationService;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequestMapping("/firestation")
 public class FireStationController {
   private final FireStationService fireStationService;
 
+  private static final Logger LOGGER = LogManager.getLogger();
+
   public FireStationController(FireStationService fireStationService) {
     this.fireStationService = fireStationService;
   }
 
-  // GET mapping is already satisfied in the SafetyNetController
+  @GetMapping("/{addressToMatch}")
+  public ResponseEntity<FireStation> readFireStation(@PathVariable String addressToMatch) {
+    String formattedAddress = addressToMatch.replace("_", " ");
+    LOGGER.info("/firestation GET request for address {}", formattedAddress);
+
+    FireStation firestation = fireStationService.readFireStation(formattedAddress);
+
+    if (firestation == null) {
+      LOGGER.error("404 /firestation GET reqeust - Address {} not found", formattedAddress);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, formattedAddress + " not found.");
+    }
+
+    LOGGER.info("/firestation GET successful for address {}: {}", formattedAddress, firestation);
+    return ResponseEntity.ok(firestation);
+  }
+  
   
   @PostMapping
   public ResponseEntity<FireStation> AddFireStation(@RequestBody FireStation newFireStationRequest) {
-    FireStation newFireStation = fireStationService.createFireStation(newFireStationRequest);
-    return new ResponseEntity<>(newFireStation, HttpStatus.CREATED);
+    String formattedAddress = newFireStationRequest.address();
+    LOGGER.info("/firestation POST request for address {}", formattedAddress);
+
+    FireStation savedFireStation = fireStationService.createFireStation(newFireStationRequest);
+
+    LOGGER.info("/firestation POST successful for address {}: {}", formattedAddress, savedFireStation);
+    return new ResponseEntity<>(savedFireStation, HttpStatus.CREATED);
   }
 
   @PutMapping("/{address}")
-  public ResponseEntity<FireStation> UpdateFireStation(@PathVariable String address, @RequestBody FireStation updatedFireStation) {
-    boolean fireStationFound = fireStationService.updateFireStation(address, updatedFireStation);
+  public ResponseEntity<FireStation> UpdateFireStation(@PathVariable String address, @RequestBody FireStation fireStationUpdates) {
+    String formattedAddress = address.replaceAll("_", " ");
+    LOGGER.info("/firestation PUT request for address {}", formattedAddress);
+    
+    boolean fireStationFound = fireStationService.updateFireStation(formattedAddress, fireStationUpdates);
     if (!fireStationFound) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Address at '" + address.replaceAll("_", " ") + "' not found");
+      LOGGER.error("404 /firestation PUT request - Address {} not found", formattedAddress);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Address at '" + formattedAddress + "' not found");
     }
+
+    LOGGER.info("/firestation PUT successful for address {}: {}", fireStationUpdates);
     return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping("/{address}")
   public ResponseEntity<FireStation> DeleteFireStation(@PathVariable String address) {
-    boolean fireStationFound = fireStationService.deleteFireStation(address);
+    String formattedAddress = address.replaceAll("_", " ");
+    LOGGER.info("/firestation DELETE request for address {}", formattedAddress);
+
+    boolean fireStationFound = fireStationService.deleteFireStation(formattedAddress);
     if (!fireStationFound) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Address at '" + address.replaceAll("_", " ") + "' not found");
+      LOGGER.error("404 /firestation DELETE request - Address {} not found", formattedAddress);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Address at '" + formattedAddress + "' not found");
     }
+
+    LOGGER.info("/firestation DELETE successful for address: {}", formattedAddress);
     return ResponseEntity.noContent().build();
   }
   

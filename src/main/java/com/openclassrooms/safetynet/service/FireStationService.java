@@ -13,18 +13,22 @@ public class FireStationService {
         this.fireStationRepository = fireStationRepository;
     }
 
+    public FireStation readFireStation(String addressToMatch) {
+        return fireStationRepository.readFireStation(addressToMatch);
+    }
+
     public FireStation createFireStation(FireStation newFireStationRequest) {
         return fireStationRepository.createFireStation(newFireStationRequest);
     }
 
-    public boolean updateFireStation(String address, FireStation updatedFireStation) {
-        String formattedAddress = address.replaceAll("_", " ").toLowerCase();
-        return fireStationRepository.updateFireStation(formattedAddress, updatedFireStation);
+    public boolean updateFireStation(String addressToMatch, FireStation updatedFireStation) {
+        return fireStationRepository.updateFireStation(addressToMatch, updatedFireStation);
     }
 
-    public boolean deleteFireStation(String address) {
-        String formattedAddress = address.replaceAll("_", " ").toLowerCase();
-        return fireStationRepository.deleteFireStation(formattedAddress);
+    public boolean deleteFireStation(String addressToMatch) {
+        return fireStationRepository.deleteFireStation(addressToMatch);
     }
+
+    
 
 }

@@ -1,5 +1,7 @@
 package com.openclassrooms.safetynet.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,50 +24,71 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 @RequestMapping("/person")
 public class PersonController {
-private final PersonService personService;
+  private final PersonService personService;
+
+  private static final Logger LOGGER = LogManager.getLogger();
 
   public PersonController(PersonService personService) {
     this.personService = personService;
   }
 
-  @GetMapping("/{firstLastName}")
-  public ResponseEntity<Person> getPersonByFirstLastName(@PathVariable String firstLastName) {
-    String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
-    Person person = personService.findPersonByFirstLastName(correctedFullName);
+  @GetMapping("/{firstLastNameToMatch}")
+  public ResponseEntity<Person> readPerson(@PathVariable String firstLastNameToMatch) {
+    String formattedFullName = firstLastNameToMatch.replace("_", " ");
+    LOGGER.info("/person GET request for name {}", formattedFullName);
+
+    Person person = personService.readPerson(formattedFullName);
+
     if (person == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, firstLastName.replace("_", " ") + " not found.");
+      LOGGER.error("404 /person GET request - Name {} not found", formattedFullName);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, formattedFullName + " not found.");
     }
+
+    LOGGER.info("/person GET successful for name {}: {}", formattedFullName, person);
     return ResponseEntity.ok(person);
   }
   
 
   @PostMapping
   public ResponseEntity<Person> createPerson(@RequestBody Person newPersonRequest) throws Exception {
+    String formattedFullName = newPersonRequest.firstName() + " " + newPersonRequest.lastName();
+    LOGGER.info("/person POST request for name {}", formattedFullName);
+
     Person savedPerson = personService.createPerson(newPersonRequest);
+
+    LOGGER.info("/person POST successful for name {}: {}", formattedFullName, savedPerson);
     return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
   }
 
-  @PutMapping("/{firstLastName}")
-  public ResponseEntity<Person> updatePerson(@PathVariable String firstLastName, @RequestBody Person personUpdates) throws Exception {
-    String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
-    Person person = personService.findPersonByFirstLastName(correctedFullName);
-    if (person == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, firstLastName.replace("_", " ") + " not found.");
+  @PutMapping("/{firstLastNameToMatch}")
+  public ResponseEntity<Person> updatePerson(@PathVariable String firstLastNameToMatch, @RequestBody Person personUpdates) throws Exception {
+    String formattedFullName = firstLastNameToMatch.replace("_", " ");
+    LOGGER.info("/person PUT request for name {}", formattedFullName);
+
+    boolean personFound = personService.updatePerson(formattedFullName, personUpdates);
+    
+    if (!personFound) {
+      LOGGER.error("404 /person PUT request - Name {} not found", formattedFullName);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, formattedFullName + " not found.");
     }
-    personService.updatePersonInfo(
-      new Person(person.firstName(), person.lastName(), personUpdates.address(), personUpdates.city(), personUpdates.zip(), personUpdates.phone(), personUpdates.email())
-    );
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    LOGGER.info("/person PUT successful for name {}: {}", formattedFullName, personUpdates);
+    return ResponseEntity.noContent().build();
   }
 
-  @DeleteMapping("/{firstLastName}")
-  public ResponseEntity<String> deletePerson(@PathVariable String firstLastName) throws Exception {
-    String correctedFullName = firstLastName.replace("_", " ").toLowerCase();
-    Person person = personService.findPersonByFirstLastName(correctedFullName);
-    if (person == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, firstLastName + " not found");
+  @DeleteMapping("/{firstLastNameToMatch}")
+  public ResponseEntity<String> deletePerson(@PathVariable String firstLastNameToMatch) throws Exception {
+    String formattedFullName = firstLastNameToMatch.replace("_", " ");
+    LOGGER.info("/person DELETE request for name {}", formattedFullName);
+
+    boolean personFound = personService.removePerson(formattedFullName);
+
+    if (!personFound) {
+      LOGGER.error("404 /person DELETE request - Name {} not found", formattedFullName);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, formattedFullName + " not found");
     }
-    personService.removePerson(person);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    LOGGER.info("/person DELETE successful for name {}", formattedFullName);
+    return ResponseEntity.noContent().build();
   }
 }
