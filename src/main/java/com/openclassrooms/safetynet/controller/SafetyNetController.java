@@ -7,9 +7,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.openclassrooms.safetynet.domain.ChildPersonDTO;
 import com.openclassrooms.safetynet.domain.FireResponseDTO;
@@ -19,7 +19,7 @@ import com.openclassrooms.safetynet.domain.InfoPersonDTO;
 import com.openclassrooms.safetynet.service.SafetyNetService;
 
 
-@Controller
+@RestController
 public class SafetyNetController {
   private final SafetyNetService safetyNetService;
 
