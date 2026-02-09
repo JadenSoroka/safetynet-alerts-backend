@@ -86,23 +86,17 @@ public class FireStationControllerWriteTest {
     class FireStationEndpointDelete {
         @Test
         void GIVEN_valid_address_THEN_204_response() throws Exception {
-            FireStation mockFireStation = new FireStation("123 Sesame St", "5");
             when(fireStationService.deleteFireStation(any())).thenReturn(true);
 
-            mvc.perform(delete("/firestation/123_Sesame_st")
-                    .content(objectMapper.writeValueAsString(mockFireStation))
-                    .contentType("application/json"))
+            mvc.perform(delete("/firestation/123_Sesame_st"))
                 .andExpect(status().isNoContent());
         }
 
         @Test
         void GIVEN_invalid_address_THEN_404_response() throws Exception {
-            FireStation mockFireStation = new FireStation("123 Sesame S", "5");
             when(fireStationService.deleteFireStation(any())).thenReturn(false);
 
-            mvc.perform(delete("/firestation/123_Sesame_s")
-                    .content(objectMapper.writeValueAsString(mockFireStation))
-                    .contentType("application/json"))
+            mvc.perform(delete("/firestation/123_Sesame_s"))
                 .andExpect(status().isNotFound());
         }
     }

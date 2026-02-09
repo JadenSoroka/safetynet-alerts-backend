@@ -63,12 +63,23 @@ public class PersonControllerWriteTest {
     @Test
     void GIVEN_valid_person_on_update_THEN_204_response() throws Exception {
       Person mockPerson = new Person("Eric", "Cadigan", "951 LoneTree Rd", "Culver", "97451", "123-456-7890", "gramps@email.com");
-      when(personService.readPerson(any())).thenReturn(mockPerson);
+      when(personService.updatePerson(any(), any())).thenReturn(true);
       
       mvc.perform(put("/person/Eric_Cadigan")
           .content(objectMapper.writeValueAsString(mockPerson))
           .contentType("application/json"))
         .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void GIVEN_invalid_person_on_update_THEN_404_response() throws Exception {
+      Person mockPerson = new Person("Eric", "Cadigan", "951 LoneTree Rd", "Culver", "97451", "123-456-7890", "gramps@email.com");
+      when(personService.updatePerson(any(), any())).thenReturn(false);
+      
+      mvc.perform(put("/person/Eric_Cadigan")
+          .content(objectMapper.writeValueAsString(mockPerson))
+          .contentType("application/json"))
+        .andExpect(status().isNotFound());
     }
   }
 
@@ -77,13 +88,18 @@ public class PersonControllerWriteTest {
   class PersonEndpointDelete {
     @Test
     void GIVEN_valid_person_on_delete_THEN_204_response() throws Exception {
-      Person mockPerson = new Person("Eric", "Cadigan", "951 LoneTree Rd", "Culver", "97451", "123-456-7890", "gramps@email.com");
-      when(personService.readPerson(any())).thenReturn(mockPerson);
+      when(personService.deletePerson(any())).thenReturn(true);
   
-      mvc.perform(delete("/person/Eric_Cadigan")
-          .content(objectMapper.writeValueAsString(mockPerson))
-          .contentType("application/json"))
+      mvc.perform(delete("/person/Eric_Cadigan"))
         .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void GIVEN_invalid_person_on_delete_THEN_204_response() throws Exception {
+      when(personService.deletePerson(any())).thenReturn(false);
+  
+      mvc.perform(delete("/person/Fake_Name"))
+        .andExpect(status().isNotFound());
     }
   }
 }

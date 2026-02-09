@@ -80,7 +80,7 @@ public class PersonController {
     String formattedFullName = firstLastNameToMatch.replace("_", " ");
     LOGGER.info("/person DELETE request for name {}", formattedFullName);
 
-    boolean personFound = personService.removePerson(formattedFullName);
+    boolean personFound = personService.deletePerson(formattedFullName);
 
     if (!personFound) {
       LOGGER.error("404 /person DELETE request - Name {} not found", formattedFullName);

@@ -25,7 +25,7 @@ public class PersonService {
     return personRepository.updatePerson(firstLastNameToMatch, personUpdates);
   }
 
-  public boolean removePerson(String firstLastNameToMatch) throws Exception {
+  public boolean deletePerson(String firstLastNameToMatch) throws Exception {
     return personRepository.deletePerson(firstLastNameToMatch);
   }
 }

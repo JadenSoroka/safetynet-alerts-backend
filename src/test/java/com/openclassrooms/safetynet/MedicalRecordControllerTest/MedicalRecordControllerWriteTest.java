@@ -88,23 +88,17 @@ public class MedicalRecordControllerWriteTest {
     class MedicalRecordEndpointDelete {
         @Test
         void GIVEN_valid_name_ON_delete_THEN_204_response() throws Exception {
-            MedicalRecord mockMedicalRecord = new MedicalRecord("Jaden", "Soroka", "11/05/2001", List.of(), List.of());
             when(medicalRecordService.deleteMedicalRecord(any())).thenReturn(true);
         
-            mvc.perform(delete("/medicalRecord/Jaden_Soroka")
-                    .content(objectMapper.writeValueAsString(mockMedicalRecord))
-                    .contentType("application/json"))
+            mvc.perform(delete("/medicalRecord/Jaden_Soroka"))
                 .andExpect(status().isNoContent());
         }
 
         @Test
         void GIVEN_invalid_name_ON_delete_THEN_204_response() throws Exception {
-            MedicalRecord mockMedicalRecord = new MedicalRecord("Jaden", "Soroka", "11/05/2001", List.of(), List.of());
             when(medicalRecordService.deleteMedicalRecord(any())).thenReturn(false);
         
-            mvc.perform(delete("/medicalRecord/fake_name")
-                    .content(objectMapper.writeValueAsString(mockMedicalRecord))
-                    .contentType("application/json"))
+            mvc.perform(delete("/medicalRecord/fake_name"))
                 .andExpect(status().isNotFound());
         }
     }
