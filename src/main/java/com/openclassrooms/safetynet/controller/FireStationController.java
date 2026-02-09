@@ -68,7 +68,7 @@ public class FireStationController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Address at '" + formattedAddress + "' not found");
     }
 
-    LOGGER.info("/firestation PUT successful for address {}: {}", fireStationUpdates);
+    LOGGER.info("/firestation PUT successful for address {}: {}", formattedAddress, fireStationUpdates);
     return ResponseEntity.noContent().build();
   }
 

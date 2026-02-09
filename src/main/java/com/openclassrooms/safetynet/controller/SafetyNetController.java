@@ -40,7 +40,7 @@ public class SafetyNetController {
   public ResponseEntity<List<ChildPersonDTO>> getChildrenAndFamiliesByAddress(@RequestParam String address) {
     LOGGER.info("/childAlert request for address {}", address);
     List<ChildPersonDTO> childPersonDTO = safetyNetService.getChildrenAndFamiliesByAddress(address);
-    LOGGER.info("/childAlert response for address {}: {}", childPersonDTO);
+    LOGGER.info("/childAlert response for address {}: {}", address, childPersonDTO);
     return ResponseEntity.ok(childPersonDTO);
   }
   
