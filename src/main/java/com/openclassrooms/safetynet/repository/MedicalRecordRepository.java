@@ -150,7 +150,7 @@ public class MedicalRecordRepository {
         while (iterator.hasNext()) {
             MedicalRecord dbMedicalRecord = iterator.next();
             String dbMedicalRecordName = dbMedicalRecord.firstName().toLowerCase() + " " + dbMedicalRecord.lastName().toLowerCase();
-            if (dbMedicalRecordName.equals(newFirstLastName)) {
+            if (dbMedicalRecordName.equals(newFirstLastName.toLowerCase())) {
                 iterator.remove();
                 return true;
             }

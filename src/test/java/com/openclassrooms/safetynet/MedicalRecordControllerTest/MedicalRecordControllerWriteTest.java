@@ -52,7 +52,8 @@ public class MedicalRecordControllerWriteTest {
                 .andExpectAll(
                     status().isCreated(),
                     jsonPath("$.firstName").value("Jaden"),
-                    jsonPath("$.lastName").value("Soroka")
+                    jsonPath("$.lastName").value("Soroka"),
+                    jsonPath("$.birthdate").value("11/05/2001")
                 );
         }
     }

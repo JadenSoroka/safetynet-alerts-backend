@@ -139,36 +139,4 @@ public class PersonRepository {
     }
     return false;
   }
-    
-  
-
-  // public Person savePerson(Person person) throws Exception{
-  //   try {
-  //     addPerson(person);
-  //     System.out.println("New person added!");
-  //     return person;
-  //   } catch (JacksonException e) {
-  //     e.printStackTrace();
-  //   }
-  //   return null;
-  // }
-
-  // public Person updatePersonInfo(Person person) throws Exception {
-  //   try {
-  //     Person updatedPerson = updatePerson(person);
-  //     return updatedPerson;
-  //   } catch (JacksonException e) {
-  //     e.printStackTrace();
-  //   }
-  //   return null;
-  // }
-
-  // public void removePerson(Person person) throws Exception {
-  //   try {
-  //     deletePerson(person);
-  //   } catch (JacksonException e) {
-  //     e.printStackTrace();
-  //   }
-  // }
-
 }

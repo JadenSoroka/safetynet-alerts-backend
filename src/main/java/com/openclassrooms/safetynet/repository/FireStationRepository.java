@@ -10,7 +10,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.openclassrooms.safetynet.domain.FireStation;
-import com.openclassrooms.safetynet.domain.Person;
 
 import jakarta.annotation.PostConstruct;
 import tools.jackson.databind.JsonNode;
@@ -129,7 +128,7 @@ public class FireStationRepository {
         Iterator<FireStation> iterator = fireStations.iterator();
         while (iterator.hasNext()) {
             FireStation dbFireStation = iterator.next();
-            if (dbFireStation.address().toLowerCase().equals(addressOfStationToRemove)) {
+            if (dbFireStation.address().toLowerCase().equals(addressOfStationToRemove.toLowerCase())) {
                 iterator.remove();
                 fireStationFound = true;
                 break;
