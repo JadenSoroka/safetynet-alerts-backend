@@ -23,6 +23,11 @@ public class SafetyNetRepository {
   private final List<FireStation> firestations = new ArrayList<>();
   private final List<MedicalRecord> medicalRecords = new ArrayList<>();
   
+  /**
+   * Loads all data (persons, fire stations, and medical records) from data.json during application initialization.
+   * 
+   * @throws RuntimeException if data.json is not found or cannot be parsed
+   */
   @PostConstruct
   public void loadData() {
     try (InputStream inputStream = getClass().getClassLoader()
@@ -45,6 +50,12 @@ public class SafetyNetRepository {
     }
   }
 
+  /**
+   * Helper method to parse and load medical records from JSON data.
+   * Extracts medications and allergies for each medical record.
+   * 
+   * @param medicalRecordsNode the JSON node containing medical records data
+   */
   private void getMedicalRecords(JsonNode medicalRecordsNode) {
     // Get medical records
     for (JsonNode medicalRecordNode : medicalRecordsNode) {
@@ -78,6 +89,11 @@ public class SafetyNetRepository {
     }
   }
 
+  /**
+   * Helper method to parse and load fire station mappings from JSON data.
+   * 
+   * @param fireStationsNode the JSON node containing fire stations data
+   */
   private void getFireStations(JsonNode fireStationsNode) {
     // Get fire stations
     for (JsonNode fireStationNode : fireStationsNode) {
@@ -89,6 +105,11 @@ public class SafetyNetRepository {
     }
   }
 
+  /**
+   * Helper method to parse and load person data from JSON data.
+   * 
+   * @param personsNode the JSON node containing persons data
+   */
   private void getPersons(JsonNode personsNode) {
     // Get people
     for (JsonNode personNode : personsNode) {
@@ -105,6 +126,11 @@ public class SafetyNetRepository {
     }
   }
 
+  /**
+   * Retrieves all persons from the repository.
+   * 
+   * @return a list containing all Person objects
+   */
   public List<Person> findAllPersons() {
     List<Person> allPersons = new ArrayList<>();
     for (Person person : persons) {
@@ -113,6 +139,12 @@ public class SafetyNetRepository {
     return allPersons;
   }
   
+  /**
+   * Finds all persons with a specific last name.
+   * 
+   * @param lastName the last name to search for
+   * @return a list of Person objects matching the last name
+   */
   public List<Person> findPersonsByLastName(String lastName) {
     List<Person> currentPersons = new ArrayList<>();
     
@@ -124,6 +156,12 @@ public class SafetyNetRepository {
     return currentPersons;
   }
   
+  /**
+   * Finds all persons living in a specific city.
+   * 
+   * @param city the city name to search for
+   * @return a list of Person objects in the specified city
+   */
   public List<Person> findPersonsByCity(String city) {
     List<Person> currentPersons = new ArrayList<>();
 
@@ -135,6 +173,12 @@ public class SafetyNetRepository {
     return currentPersons;
   }
 
+  /**
+   * Finds all persons living at a specific address.
+   * 
+   * @param address the address to search for
+   * @return a list of Person objects at the specified address
+   */
   public List<Person> findPersonsByAddress(String address) {
     List<Person> currentPersons = new ArrayList<>();
     for (Person person : persons) {
@@ -145,6 +189,12 @@ public class SafetyNetRepository {
     return currentPersons;
   }
 
+  /**
+   * Finds all fire station mappings for a specific station number.
+   * 
+   * @param stationNumber the fire station number to search for
+   * @return a list of FireStation objects with the specified station number
+   */
   public List<FireStation> findFireStationsByStationNumber(String stationNumber) {
     List<FireStation> currentFirestations = new ArrayList<>();
     for (FireStation firestation : firestations) {
@@ -155,6 +205,12 @@ public class SafetyNetRepository {
     return currentFirestations;
   }
 
+  /**
+   * Finds the fire station mapping for a specific address.
+   * 
+   * @param address the address to search for
+   * @return the FireStation object if found, null otherwise
+   */
   public FireStation findFireStationByAddress(String address) {
     for (FireStation fireStation : firestations) {
       if (fireStation.address().equals(address)) {
@@ -164,6 +220,13 @@ public class SafetyNetRepository {
     return null;
   }
 
+  /**
+   * Finds a medical record by first and last name.
+   * 
+   * @param firstName the first name to search for
+   * @param lastName the last name to search for
+   * @return the MedicalRecord object if found, null otherwise
+   */
   public MedicalRecord findMedicalRecordsByFirstAndLastName(String firstName, String lastName) {
     MedicalRecord currentMedicalRecords = null;
 

@@ -21,6 +21,12 @@ public class PersonRepository {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final List<Person> persons = new ArrayList<>();
   
+  /**
+   * Loads person data from data.json file during application initialization.
+   * Populates the persons list with all person records.
+   * 
+   * @throws RuntimeException if data.json is not found or cannot be parsed
+   */
   @PostConstruct
   public void loadPersons() {
     try (InputStream inputStream = getClass().getClassLoader()
@@ -50,6 +56,12 @@ public class PersonRepository {
     }
   }
 
+  /**
+   * Retrieves a person by their full name.
+   * 
+   * @param firstLastNameToMatch the full name to search for (case-insensitive)
+   * @return the Person object if found, null otherwise
+   */
   public Person readPerson(String firstLastNameToMatch) {
     for (Person dbPerson : persons) {
       String dbPersonName = dbPerson.firstName().toLowerCase() + " " + dbPerson.lastName().toLowerCase();
@@ -60,6 +72,14 @@ public class PersonRepository {
     return null;
   }
 
+  /**
+   * Creates a new person and persists it to data.json.
+   * 
+   * @param newPerson the Person object to create
+   * @return the created Person object
+   * @throws IOException if an I/O error occurs
+   * @throws RuntimeException if data.json cannot be read or written
+   */
   public Person createPerson(Person newPerson) throws IOException {
     try (InputStream inputStream = getClass().getClassLoader()
       .getResourceAsStream("data.json")) {
@@ -80,6 +100,15 @@ public class PersonRepository {
     }
   }
 
+  /**
+   * Updates an existing person with new data and persists changes to data.json.
+   * 
+   * @param firstLastNameToMatch the full name of the person to update (case-insensitive)
+   * @param newPerson the Person object containing updated information
+   * @return true if the person was found and updated, false otherwise
+   * @throws IOException if an I/O error occurs
+   * @throws RuntimeException if data.json cannot be read or written
+   */
   public boolean updatePerson(String firstLastNameToMatch, Person newPerson) throws IOException {
     try (InputStream inputStream = getClass().getClassLoader()
       .getResourceAsStream("data.json")) {
@@ -104,6 +133,14 @@ public class PersonRepository {
     }
   }
 
+  /**
+   * Deletes a person by their full name and persists changes to data.json.
+   * 
+   * @param firstLastNameToMatch the full name of the person to delete (case-insensitive)
+   * @return true if the person was found and deleted, false otherwise
+   * @throws IOException if an I/O error occurs
+   * @throws RuntimeException if data.json cannot be read or written
+   */
   public boolean deletePerson(String firstLastNameToMatch) throws IOException {
     try (InputStream inputStream = getClass().getClassLoader()
       .getResourceAsStream("data.json")) {
@@ -127,6 +164,12 @@ public class PersonRepository {
     }
   }
 
+  /**
+   * Helper method to remove a person from the in-memory list.
+   * 
+   * @param oldFirstLastName the full name of the person to remove (case-insensitive)
+   * @return true if the person was found and removed, false otherwise
+   */
   private boolean removePersonFromPersons(String oldFirstLastName) {
     Iterator<Person> iterator = persons.iterator();
     while (iterator.hasNext()) {

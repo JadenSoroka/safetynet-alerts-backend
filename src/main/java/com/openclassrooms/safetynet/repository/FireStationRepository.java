@@ -22,6 +22,12 @@ public class FireStationRepository {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<FireStation> fireStations = new ArrayList<>();
 
+    /**
+     * Loads fire station data from data.json file during application initialization.
+     * Populates the fireStations list with all fire station mappings.
+     * 
+     * @throws RuntimeException if data.json is not found or cannot be parsed
+     */
     @PostConstruct
     public void loadPersons() {
         try (InputStream inputStream = getClass().getClassLoader()
@@ -46,6 +52,12 @@ public class FireStationRepository {
         }
     }
 
+    /**
+     * Retrieves a fire station mapping by address.
+     * 
+     * @param addressToMatch the address to search for (case-insensitive)
+     * @return the FireStation object if found, null otherwise
+     */
     public FireStation readFireStation(String addressToMatch) {
         for (FireStation dbFireStation : fireStations) {
             String dbFireStationAddress = dbFireStation.address().toLowerCase();
@@ -56,6 +68,13 @@ public class FireStationRepository {
         return null;
     }
 
+    /**
+     * Creates a new fire station mapping and persists it to data.json.
+     * 
+     * @param newFireStation the FireStation object to create
+     * @return the created FireStation object
+     * @throws RuntimeException if data.json cannot be read or written
+     */
     public FireStation createFireStation(FireStation newFireStation) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
@@ -76,6 +95,14 @@ public class FireStationRepository {
         }    
     }
 
+    /**
+     * Updates an existing fire station mapping with new data and persists changes to data.json.
+     * 
+     * @param address the address of the fire station to update (case-insensitive)
+     * @param newFireStation the FireStation object containing updated information
+     * @return true if the fire station was found and updated, false otherwise
+     * @throws RuntimeException if data.json cannot be read or written
+     */
     public boolean updateFireStation(String address, FireStation newFireStation) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
@@ -100,6 +127,13 @@ public class FireStationRepository {
         }    
     }
 
+    /**
+     * Deletes a fire station mapping by address and persists changes to data.json.
+     * 
+     * @param address the address of the fire station to delete (case-insensitive)
+     * @return true if the fire station was found and deleted, false otherwise
+     * @throws RuntimeException if data.json cannot be read or written
+     */
     public boolean deleteFireStation(String address) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
@@ -123,6 +157,12 @@ public class FireStationRepository {
         }  
     }
 
+    /**
+     * Helper method to remove a fire station from the in-memory list.
+     * 
+     * @param addressOfStationToRemove the address of the fire station to remove (case-insensitive)
+     * @return true if the fire station was found and removed, false otherwise
+     */
     private boolean removeFireStationFromFireStations(String addressOfStationToRemove) {
         boolean fireStationFound = false;
         Iterator<FireStation> iterator = fireStations.iterator();

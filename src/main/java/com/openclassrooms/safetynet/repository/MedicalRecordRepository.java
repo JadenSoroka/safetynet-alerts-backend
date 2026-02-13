@@ -22,6 +22,12 @@ public class MedicalRecordRepository {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<MedicalRecord> medicalRecords = new ArrayList<>();
 
+    /**
+     * Loads medical records from data.json file during application initialization.
+     * Populates the medicalRecords list with all medical records including medications and allergies.
+     * 
+     * @throws RuntimeException if data.json is not found or cannot be parsed
+     */
     @PostConstruct
     public void loadPersons() {
         try (InputStream inputStream = getClass().getClassLoader()
@@ -68,6 +74,12 @@ public class MedicalRecordRepository {
         }
     }
 
+    /**
+     * Retrieves a medical record by person's full name.
+     * 
+     * @param firstLastNameToMatch the full name to search for (case-insensitive)
+     * @return the MedicalRecord object if found, null otherwise
+     */
     public MedicalRecord readPerson(String firstLastNameToMatch) {
         for (MedicalRecord dbMedicalRecord : medicalRecords) {
             String dbMedicalRecordName = dbMedicalRecord.firstName().toLowerCase() + " " + dbMedicalRecord.lastName().toLowerCase();
@@ -78,6 +90,13 @@ public class MedicalRecordRepository {
         return null;
     }
 
+    /**
+     * Creates a new medical record and persists it to data.json.
+     * 
+     * @param newMedicalRecord the MedicalRecord object to create
+     * @return the created MedicalRecord object
+     * @throws RuntimeException if data.json cannot be read or written
+     */
     public MedicalRecord createMedicalRecord(MedicalRecord newMedicalRecord) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
@@ -98,6 +117,14 @@ public class MedicalRecordRepository {
         }   
     }
 
+    /**
+     * Updates an existing medical record with new data and persists changes to data.json.
+     * 
+     * @param formattedFirstLastName the full name of the person whose record to update (case-insensitive)
+     * @param updatedMedicalRecord the MedicalRecord object containing updated information
+     * @return true if the medical record was found and updated, false otherwise
+     * @throws RuntimeException if data.json cannot be read or written
+     */
 	public boolean updateMedicalRecord(String formattedFirstLastName, MedicalRecord updatedMedicalRecord) {
 		try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
@@ -122,6 +149,13 @@ public class MedicalRecordRepository {
         } 
 	}
     
+    /**
+     * Deletes a medical record by person's full name and persists changes to data.json.
+     * 
+     * @param formattedFirstLastName the full name of the person whose record to delete (case-insensitive)
+     * @return true if the medical record was found and deleted, false otherwise
+     * @throws RuntimeException if data.json cannot be read or written
+     */
     public boolean deleteMedicalRecord(String formattedFirstLastName) {
         try (InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream("data.json")) {
@@ -145,6 +179,12 @@ public class MedicalRecordRepository {
         } 
 	}
     
+    /**
+     * Helper method to remove a medical record from the in-memory list.
+     * 
+     * @param newFirstLastName the full name of the person whose record to remove (case-insensitive)
+     * @return true if the medical record was found and removed, false otherwise
+     */
     private boolean removeMedicalRecordFromMedicalRecords(String newFirstLastName) {
         Iterator<MedicalRecord> iterator = medicalRecords.iterator();
         while (iterator.hasNext()) {
