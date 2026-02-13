@@ -29,6 +29,13 @@ public class FireStationController {
     this.fireStationService = fireStationService;
   }
 
+  /**
+   * Retrieves a fire station mapping by address.
+   * 
+   * @param addressToMatch the address with underscore separator (e.g., "123_Main_St")
+   * @return ResponseEntity containing the FireStation object if found
+   * @throws ResponseStatusException with 404 status if the fire station is not found
+   */
   @GetMapping("/{addressToMatch}")
   public ResponseEntity<FireStation> readFireStation(@PathVariable String addressToMatch) {
     String formattedAddress = addressToMatch.replace("_", " ");
@@ -45,7 +52,12 @@ public class FireStationController {
     return ResponseEntity.ok(firestation);
   }
   
-  
+  /**
+   * Creates a new fire station mapping in the system.
+   * 
+   * @param newFireStationRequest the FireStation object containing the address and station number
+   * @return ResponseEntity with 201 CREATED status containing the created FireStation object
+   */
   @PostMapping
   public ResponseEntity<FireStation> AddFireStation(@RequestBody FireStation newFireStationRequest) {
     String formattedAddress = newFireStationRequest.address();
@@ -57,6 +69,14 @@ public class FireStationController {
     return new ResponseEntity<>(savedFireStation, HttpStatus.CREATED);
   }
 
+  /**
+   * Updates an existing fire station mapping.
+   * 
+   * @param address the address with underscore separator (e.g., "123_Main_St")
+   * @param fireStationUpdates the FireStation object containing the updated station number
+   * @return ResponseEntity with 204 NO_CONTENT status if successful
+   * @throws ResponseStatusException with 404 status if the fire station is not found
+   */
   @PutMapping("/{address}")
   public ResponseEntity<FireStation> UpdateFireStation(@PathVariable String address, @RequestBody FireStation fireStationUpdates) {
     String formattedAddress = address.replaceAll("_", " ");
@@ -72,6 +92,13 @@ public class FireStationController {
     return ResponseEntity.noContent().build();
   }
 
+  /**
+   * Deletes a fire station mapping from the system.
+   * 
+   * @param address the address with underscore separator (e.g., "123_Main_St")
+   * @return ResponseEntity with 204 NO_CONTENT status if successful
+   * @throws ResponseStatusException with 404 status if the fire station is not found
+   */
   @DeleteMapping("/{address}")
   public ResponseEntity<FireStation> DeleteFireStation(@PathVariable String address) {
     String formattedAddress = address.replaceAll("_", " ");

@@ -28,6 +28,13 @@ public class SafetyNetController {
   public SafetyNetController(SafetyNetService safetyNetService) {
     this.safetyNetService = safetyNetService;
   }
+
+  /**
+   * Retrieves all persons covered by a specific fire station along with counts of adults and children.
+   * 
+   * @param station the fire station number
+   * @return ResponseEntity containing a FireStationPersonDTO with person details and counts
+   */
   @GetMapping("/firestation")
   public ResponseEntity<FireStationPersonDTO> getPersonsByStationNumber(@RequestParam String station) {
     LOGGER.info("/firestation request for station number {}", station);
@@ -36,6 +43,12 @@ public class SafetyNetController {
     return ResponseEntity.ok(fireStationResponseDTO);
   }
 
+  /**
+   * Retrieves all children living at a specific address along with their family members.
+   * 
+   * @param address the address to search for children
+   * @return ResponseEntity containing a list of ChildPersonDTO objects
+   */
   @GetMapping("/childAlert")
   public ResponseEntity<List<ChildPersonDTO>> getChildrenAndFamiliesByAddress(@RequestParam String address) {
     LOGGER.info("/childAlert request for address {}", address);
@@ -44,7 +57,12 @@ public class SafetyNetController {
     return ResponseEntity.ok(childPersonDTO);
   }
   
-
+  /**
+   * Retrieves all phone numbers of persons covered by a specific fire station.
+   * 
+   * @param firestation the fire station number
+   * @return ResponseEntity containing a set of phone numbers
+   */
   @GetMapping("/phoneAlert")
   public ResponseEntity<Set<String>> getPhoneNumbersByFireStation(@RequestParam String firestation) {
     LOGGER.info("/phoneAlert request for station number {}", firestation);
@@ -53,6 +71,12 @@ public class SafetyNetController {
     return ResponseEntity.ok(phoneNumbers);
   }
 
+  /**
+   * Retrieves all persons living at a specific address along with the fire station number serving that address.
+   * 
+   * @param address the address to search
+   * @return ResponseEntity containing a FireResponseDTO with person details and fire station number
+   */
   @GetMapping("/fire")
   public ResponseEntity<FireResponseDTO> getPersonsAndFireStationByAddress(@RequestParam String address) {
     LOGGER.info("/fire request for address {}", address);
@@ -61,6 +85,12 @@ public class SafetyNetController {
     return ResponseEntity.ok(fireResponseDTO);
   }
 
+  /**
+   * Retrieves all persons grouped by address for multiple fire station numbers.
+   * 
+   * @param stations the list of fire station numbers
+   * @return ResponseEntity containing a list of FloodResponseDTO objects with persons grouped by address
+   */
   @GetMapping("/flood/stations")
   public ResponseEntity<List<FloodResponseDTO>> getPersonsByStationNumbers(@RequestParam List<String> stations) {
     LOGGER.info("/flood/stations request for stations {}", stations);
@@ -69,15 +99,26 @@ public class SafetyNetController {
     return ResponseEntity.ok(floodResponseDTO);
   }
   
-  
+  /**
+   * Retrieves detailed information for all persons with a specific last name.
+   * 
+   * @param lastName the last name to search for
+   * @return ResponseEntity containing a list of InfoPersonDTO objects with person details
+   */
   @GetMapping("/personInfo")
-  public ResponseEntity<List<InfoPersonDTO>> findByLastName(@RequestParam String lastName) {
+  public ResponseEntity<List<InfoPersonDTO>> getPersonInfoByLastName(@RequestParam String lastName) {
     LOGGER.info("/personInfo request for last name {}", lastName);
     List<InfoPersonDTO> persons = safetyNetService.findPersonsByLastName(lastName);
     LOGGER.info("/personInfo response for last name {}: {}", lastName, persons);
     return ResponseEntity.ok(persons);
   }
 
+  /**
+   * Retrieves all email addresses of persons living in a specific city.
+   * 
+   * @param city the city name
+   * @return ResponseEntity containing a list of email addresses
+   */
   @GetMapping("/communityEmail")
   public ResponseEntity<List<String>> getEmailsByCity(@RequestParam String city) {
     LOGGER.info("/communityEmail request for city {}", city);

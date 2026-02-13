@@ -29,6 +29,13 @@ public class MedicalRecordController {
     this.medicalRecordService = medicalRecordService;
   }
 
+  /**
+   * Retrieves a medical record by the person's first and last name.
+   * 
+   * @param firstLastNameToMatch the full name with underscore separator (e.g., "John_Doe")
+   * @return ResponseEntity containing the MedicalRecord object if found
+   * @throws ResponseStatusException with 404 status if the medical record is not found
+   */
   @GetMapping("/{firstLastNameToMatch}")
   public ResponseEntity<MedicalRecord> readMedicalRecord(@PathVariable String firstLastNameToMatch) {
     String formattedFullName = firstLastNameToMatch.replace("_", " ");
@@ -45,7 +52,12 @@ public class MedicalRecordController {
     return ResponseEntity.ok(medicalRecord);
   }
   
-  
+  /**
+   * Creates a new medical record in the system.
+   * 
+   * @param newMedicalRecordRequest the MedicalRecord object containing the new record's details
+   * @return ResponseEntity with 201 CREATED status containing the created MedicalRecord object
+   */
   @PostMapping
   public ResponseEntity<MedicalRecord> createMedicalRecord(@RequestBody MedicalRecord newMedicalRecordRequest) {
     String formattedFullName = newMedicalRecordRequest.firstName() + " " + newMedicalRecordRequest.lastName();
@@ -57,6 +69,14 @@ public class MedicalRecordController {
     return new ResponseEntity<>(savedMedicalRecord, HttpStatus.CREATED);
   }
 
+  /**
+   * Updates an existing medical record.
+   * 
+   * @param firstLastName the full name with underscore separator (e.g., "John_Doe")
+   * @param medicalRecordUpdates the MedicalRecord object containing the updated details
+   * @return ResponseEntity with 204 NO_CONTENT status if successful
+   * @throws ResponseStatusException with 404 status if the medical record is not found
+   */
   @PutMapping("/{firstLastName}")
   public ResponseEntity<MedicalRecord> updateMedicalRecord(@PathVariable String firstLastName, @RequestBody MedicalRecord medicalRecordUpdates) {
     String formattedFullName = firstLastName.replace("_", " ");
@@ -73,6 +93,13 @@ public class MedicalRecordController {
     return ResponseEntity.noContent().build();
   }
 
+  /**
+   * Deletes a medical record from the system.
+   * 
+   * @param firstLastName the full name with underscore separator (e.g., "John_Doe")
+   * @return ResponseEntity with 204 NO_CONTENT status if successful
+   * @throws ResponseStatusException with 404 status if the medical record is not found
+   */
   @DeleteMapping("/{firstLastName}")
   public ResponseEntity<MedicalRecord> deleteMedicalRecord(@PathVariable String firstLastName) {
     String formattedFullName = firstLastName.replace("_", " ");
