@@ -44,7 +44,7 @@ public class FireStationController {
     FireStation firestation = fireStationService.readFireStation(formattedAddress);
 
     if (firestation == null) {
-      LOGGER.error("404 /firestation GET reqeust - Address {} not found", formattedAddress);
+      LOGGER.error("404 /firestation GET request - Address {} not found", formattedAddress);
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, formattedAddress + " not found.");
     }
 
